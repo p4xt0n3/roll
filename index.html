@@ -40,6 +40,7 @@
             
             <div class="debug-section">
                 <button class="debug-btn" id="debugBtn">C</button>
+                <button class="debug-btn" id="musicBtn">M</button>
             </div>
         </div>
         
@@ -151,6 +152,24 @@
                     <div class="debug-actions">
                         <button class="debug-reset" id="resetRates">Reset to Original</button>
                         <button class="debug-apply" id="applyRates">Apply Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- new confirmation modal for music redirect -->
+        <div class="password-modal" id="musicModal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>P4XT0N Music</h3>
+                    <button class="modal-close" id="closeMusicModal">&times;</button>
+                </div>
+                <div class="modal-body" style="text-align:center;">
+                    <p style="margin-bottom:1rem;">Do you want go to P4XT0N Music?</p>
+                    <div style="display:flex; gap:0.75rem; justify-content:center;">
+                        <button class="password-submit" id="musicYes" style="width:120px;">Yes</button>
+                        <button class="debug-reset" id="musicNo" style="width:120px;">No</button>
                     </div>
                 </div>
             </div>

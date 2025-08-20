@@ -505,6 +505,10 @@ body {
     border-color: var(--accent-primary);
 }
 
+.debug-btn + .debug-btn {
+    margin-left: 0.5rem;
+}
+
 .password-modal,
 .debug-modal {
     position: fixed;

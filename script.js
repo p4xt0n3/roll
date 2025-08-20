@@ -89,7 +89,9 @@ class GachaSystem {
     
     setupDebugSystem() {
         const debugBtn = document.getElementById('debugBtn');
+        const musicBtn = document.getElementById('musicBtn');
         const passwordModal = document.getElementById('passwordModal');
+        const musicModal = document.getElementById('musicModal');
         const debugModal = document.getElementById('debugModal');
         const passwordInput = document.getElementById('passwordInput');
         const passwordSubmit = document.getElementById('passwordSubmit');
@@ -107,6 +109,11 @@ class GachaSystem {
             setTimeout(() => passwordInput.focus(), 100);
         });
         
+        // Open music confirmation modal
+        musicBtn.addEventListener('click', () => {
+            musicModal.style.display = 'flex';
+        });
+        
         // Close modals
         closePasswordModal.addEventListener('click', () => {
             passwordModal.style.display = 'none';
@@ -116,10 +123,21 @@ class GachaSystem {
             debugModal.style.display = 'none';
         });
         
+        // music modal close button
+        document.getElementById('closeMusicModal').addEventListener('click', () => {
+            musicModal.style.display = 'none';
+        });
+        
         // Close on overlay click
         passwordModal.addEventListener('click', (e) => {
             if (e.target === passwordModal) {
                 passwordModal.style.display = 'none';
+            }
+        });
+        
+        musicModal.addEventListener('click', (e) => {
+            if (e.target === musicModal) {
+                musicModal.style.display = 'none';
             }
         });
         
@@ -146,6 +164,15 @@ class GachaSystem {
             if (e.key === 'Enter') {
                 checkPassword();
             }
+        });
+        
+        // Music modal actions
+        document.getElementById('musicYes').addEventListener('click', () => {
+            // Navigate to external site
+            window.location.href = 'https://p4xt0n3.github.io/ttou';
+        });
+        document.getElementById('musicNo').addEventListener('click', () => {
+            musicModal.style.display = 'none';
         });
         
         // Reset rates
