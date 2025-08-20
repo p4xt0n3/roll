@@ -19,6 +19,7 @@ const gameData = {
         gold: [
             "Crown of Primordial Kings", "Eternal Flame Core", "Blade of the Abysswalker", "Heavenpiercer Lance",
             "Orb of Infinite Echoes", "Wings of the Fallen Seraph", "Dragonlord's Heartstone",
+            "Dragon Ball",
             "Scepter of Reality's End", "Chaosforged Armor", "Eye of the Void Serpent", "Worldshaper Hammer",
             "Sacred Chalice of Aeons", "Book of All Origins", "Timeweaver's Hourglass", "Ring of the Endless Dream",
             "Basebat of 333", "Hypersonic Multitool", "Scepter of Hope & Love", "Armside Supersonic Blade",
@@ -49,6 +50,11 @@ class GachaSystem {
     constructor() {
         this.currentRollType = 1;
         this.isRolling = false;
+        
+        // Inventories
+        this.characterInventory = []; // stores character names
+        // map itemName -> { count: number, rarity: 'blue'|'purple'|'gold'|'red' }
+        this.itemInventory = {};
         
         // Original rates for reset functionality
         this.originalRates = {
@@ -84,6 +90,36 @@ class GachaSystem {
         // Clear results
         document.getElementById('clearResults').addEventListener('click', () => {
             this.clearResults();
+        });
+
+        // Save/Load UI
+        document.getElementById('saveLoadBtn').addEventListener('click', () => {
+            document.getElementById('saveLoadModal').style.display = 'flex';
+            document.getElementById('saveTextarea').value = this.exportState();
+            document.getElementById('saveLoadMsg').textContent = 'Preview below. You can copy, save to local, or paste a saved JSON and click Import.';
+        });
+        document.getElementById('closeSaveLoadModal').addEventListener('click', ()=> document.getElementById('saveLoadModal').style.display = 'none');
+
+        // Crafting & Inventory buttons
+        document.getElementById('craftingBtn').addEventListener('click', () => {
+            document.getElementById('craftingModal').style.display = 'flex';
+            document.getElementById('craftMessage').textContent = '';
+            this.updateCraftListCounts();
+        });
+        document.getElementById('inventoryBtn').addEventListener('click', () => {
+            this.showInventory('characters');
+            document.getElementById('inventoryModal').style.display = 'flex';
+        });
+        document.getElementById('closeCraftingModal').addEventListener('click', ()=> document.getElementById('craftingModal').style.display = 'none');
+        document.getElementById('closeInventoryModal').addEventListener('click', ()=> document.getElementById('inventoryModal').style.display = 'none');
+        document.getElementById('invCharsBtn').addEventListener('click', ()=> this.showInventory('characters'));
+        document.getElementById('invItemsBtn').addEventListener('click', ()=> this.showInventory('items'));
+        // Craft actions (delegated)
+        document.querySelectorAll('.craft-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const recipe = e.target.closest('.craft-item').dataset.recipe;
+                this.attemptCraft(recipe);
+            });
         });
     }
     
@@ -185,6 +221,71 @@ class GachaSystem {
         applyRates.addEventListener('click', () => {
             this.applyDebugRates();
             debugModal.style.display = 'none';
+        });
+
+        // Save to localStorage from modal
+        document.getElementById('saveToLocal').addEventListener('click', () => {
+            const json = document.getElementById('saveTextarea').value;
+            try {
+                // validate
+                JSON.parse(json);
+                localStorage.setItem('ttou_save', json);
+                document.getElementById('saveLoadMsg').textContent = 'Saved to localStorage.';
+            } catch (e) {
+                document.getElementById('saveLoadMsg').textContent = 'Invalid JSON — cannot save.';
+            }
+        });
+
+        // Export copy to clipboard
+        document.getElementById('exportCopy').addEventListener('click', async () => {
+            const json = document.getElementById('saveTextarea').value;
+            try {
+                await navigator.clipboard.writeText(json);
+                document.getElementById('saveLoadMsg').textContent = 'Export copied to clipboard.';
+            } catch (e) {
+                document.getElementById('saveLoadMsg').textContent = 'Cannot copy — your browser blocked clipboard access.';
+            }
+        });
+
+        // Clear local save
+        document.getElementById('clearSave').addEventListener('click', () => {
+            localStorage.removeItem('ttou_save');
+            document.getElementById('saveLoadMsg').textContent = 'Local save cleared.';
+        });
+
+        // Import / Load from textarea
+        document.getElementById('importFromTextarea').addEventListener('click', () => {
+            const json = document.getElementById('saveTextarea').value;
+            try {
+                this.loadState(json);
+                document.getElementById('saveLoadMsg').textContent = 'Progress imported successfully.';
+                // update textarea to pretty format
+                document.getElementById('saveTextarea').value = this.exportState();
+            } catch (e) {
+                document.getElementById('saveLoadMsg').textContent = 'Import failed: ' + e.message;
+            }
+        });
+
+        // Attempt auto-load if local save exists when opening modal
+        document.getElementById('saveLoadModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('saveLoadModal')) {
+                document.getElementById('saveLoadModal').style.display = 'none';
+            }
+        });
+
+        // If there's a local save, provide quick load when opening the modal
+        document.getElementById('saveLoadBtn').addEventListener('dblclick', () => {
+            const saved = localStorage.getItem('ttou_save');
+            if (saved) {
+                try {
+                    this.loadState(saved);
+                    alert('Local progress loaded.');
+                } catch (e) {
+                    alert('Failed to load local save: ' + e.message);
+                }
+            } else {
+                alert('No local save found.');
+            }
         });
     }
     
@@ -398,6 +499,20 @@ class GachaSystem {
             setTimeout(() => {
                 const resultCard = this.createResultCard(result);
                 resultsGrid.insertBefore(resultCard, resultsGrid.firstChild);
+                
+                // Save to inventories
+                if (result.type === 'character') {
+                    this.characterInventory.push(result.name);
+                } else {
+                    // store count + rarity
+                    this.incItem(result.name, 1, result.rarity);
+                }
+                
+                // Update inventory modal if open
+                if (document.getElementById('inventoryModal').style.display === 'flex') {
+                    const currentTab = document.getElementById('invCharsBtn') && document.getElementById('invCharsBtn').classList.contains('debug-apply') ? 'characters' : 'items';
+                    this.showInventory(currentTab);
+                }
             }, index * 100);
         });
     }
@@ -428,8 +543,209 @@ class GachaSystem {
         resultsGrid.innerHTML = '';
     }
     
+    showInventory(mode) {
+        const dest = document.getElementById('inventoryContent');
+        dest.innerHTML = '';
+        if (mode === 'characters') {
+            if (this.characterInventory.length === 0) {
+                dest.textContent = 'No characters yet.';
+                return;
+            }
+            this.characterInventory.slice().reverse().forEach(name => {
+                const el = document.createElement('div');
+                el.style.padding = '0.5rem 0';
+                el.style.borderBottom = '1px solid var(--border-primary)';
+                el.textContent = name;
+                dest.appendChild(el);
+            });
+            document.getElementById('invCharsBtn').classList.add('debug-apply');
+            document.getElementById('invCharsBtn').classList.remove('debug-reset');
+            document.getElementById('invItemsBtn').classList.remove('debug-apply');
+            document.getElementById('invItemsBtn').classList.add('debug-reset');
+        } else {
+            const keys = Object.keys(this.itemInventory);
+            if (keys.length === 0) {
+                dest.textContent = 'No items yet.';
+                return;
+            }
+            keys.sort().reverse().forEach(name => {
+                const entry = this.itemInventory[name];
+                const count = entry.count;
+                const rarity = entry.rarity || 'blue';
+                const el = document.createElement('div');
+                el.style.display = 'flex';
+                el.style.justifyContent = 'space-between';
+                el.style.alignItems = 'center';
+                el.style.padding = '0.5rem 0';
+                el.style.borderBottom = '1px solid var(--border-primary)';
+                el.className = `inv-item rarity-${rarity}`;
+                el.innerHTML = `<div class="inv-name">${name}</div><div style="color:var(--text-secondary)">${count}×</div>`;
+                dest.appendChild(el);
+            });
+            document.getElementById('invItemsBtn').classList.add('debug-apply');
+            document.getElementById('invItemsBtn').classList.remove('debug-reset');
+            document.getElementById('invCharsBtn').classList.remove('debug-apply');
+            document.getElementById('invCharsBtn').classList.add('debug-reset');
+        }
+    }
+
+    // refresh craft material count badges inside the crafting modal
+    updateCraftListCounts() {
+        // map materials to counts using helper
+        const needed = ['Dragon Ball','Tier I Spiritual Bow Embryo','Book of Ignis','Book of Terra','Book of Aqua'];
+        const countsMap = {};
+        needed.forEach(n => countsMap[n] = this.getItemCount(n));
+        document.querySelectorAll('.material-count').forEach(el => {
+            const mat = el.dataset.material;
+            el.textContent = countsMap[mat] || 0;
+        });
+    }
+
+    attemptCraft(recipe) {
+        const msgEl = document.getElementById('craftMessage');
+        const hasItem = (name, qty = 1) => this.getItemCount(name) >= qty;
+         // find the button to animate
+         const itemEl = document.querySelector(`.craft-item[data-recipe="${recipe}"]`);
+         const btn = itemEl && itemEl.querySelector('.craft-btn');
+         if (btn) { btn.classList.add('loading'); btn.textContent = 'Working...'; }
+         // simulate brief crafting delay
+         setTimeout(() => {
+             // Recipes
+             if (recipe === 'superDragon') {
+                if (hasItem('Dragon Ball', 7)) {
+                    this.decItem('Dragon Ball', 7);
+                    // crafted Super Dragon Ball - set rarity to gold
+                    this.incItem('Super Dragon Ball', 1, 'gold');
+                     msgEl.style.color = '#9ae6b4';
+                     msgEl.textContent = 'Crafted Super Dragon Ball!';
+                     if (btn) { btn.classList.remove('loading'); btn.classList.add('success'); btn.textContent = 'Done'; }
+                 } else {
+                     msgEl.style.color = '#fca5a5';
+                     msgEl.textContent = 'Missing 7 × Dragon Ball.';
+                     if (btn) { btn.classList.remove('loading'); btn.textContent = 'Craft'; }
+                 }
+             } else if (recipe === 'bowIgnis') {
+                if (hasItem('Tier I Spiritual Bow Embryo',1) && hasItem('Book of Ignis',1)) {
+                    this.decItem('Tier I Spiritual Bow Embryo', 1);
+                    this.decItem('Book of Ignis', 1);
+                    // crafted Bow of Ignis - set rarity to gold
+                    this.incItem('Bow of Ignis',1,'gold');
+                     msgEl.style.color = '#9ae6b4';
+                     msgEl.textContent = 'Crafted Bow of Ignis!';
+                     if (btn) { btn.classList.remove('loading'); btn.classList.add('success'); btn.textContent = 'Done'; }
+                 } else {
+                     msgEl.style.color = '#fca5a5';
+                     msgEl.textContent = 'Missing required materials for Bow of Ignis.';
+                     if (btn) { btn.classList.remove('loading'); btn.textContent = 'Craft'; }
+                 }
+             } else if (recipe === 'bookNature') {
+                if (hasItem('Book of Terra',1) && hasItem('Book of Aqua',1)) {
+                    this.decItem('Book of Terra', 1);
+                    this.decItem('Book of Aqua', 1);
+                    // crafted Book of Nature - set rarity to purple
+                    this.incItem('Book of Nature',1,'purple');
+                     msgEl.style.color = '#9ae6b4';
+                     msgEl.textContent = 'Crafted Book of Nature!';
+                     if (btn) { btn.classList.remove('loading'); btn.classList.add('success'); btn.textContent = 'Done'; }
+                 } else {
+                     msgEl.style.color = '#fca5a5';
+                     msgEl.textContent = 'Missing Book of Terra or Book of Aqua.';
+                     if (btn) { btn.classList.remove('loading'); btn.textContent = 'Craft'; }
+                 }
+             }
+             // Clean zeroes
+             for (const k of Object.keys(this.itemInventory)) {
+                 if (!this.itemInventory[k] || this.itemInventory[k].count <= 0) delete this.itemInventory[k];
+             }
+             // refresh inventory view and crafting counts if open
+             if (document.getElementById('inventoryModal').style.display === 'flex') this.showInventory('items');
+             this.updateCraftListCounts();
+             // revert success button after short delay
+             if (btn && btn.classList.contains('success')) {
+                 setTimeout(() => { btn.classList.remove('success'); btn.textContent = 'Craft'; }, 1200);
+             }
+         }, 700);
+     }
+    
+    // inventory helpers
+    getItemCount(name) {
+        return (this.itemInventory[name] && this.itemInventory[name].count) || 0;
+    }
+    getItemRarity(name) {
+        return (this.itemInventory[name] && this.itemInventory[name].rarity) || 'blue';
+    }
+    incItem(name, amount = 1, rarity = 'blue') {
+        if (!this.itemInventory[name]) this.itemInventory[name] = { count: 0, rarity };
+        this.itemInventory[name].count += amount;
+        // if a higher rarity is ever added later, preserve the highest rarity label (red > gold > purple > blue)
+        const order = { blue: 0, purple: 1, gold: 2, red: 3 };
+        if (rarity && order[rarity] > order[this.itemInventory[name].rarity]) {
+            this.itemInventory[name].rarity = rarity;
+        }
+        if (this.itemInventory[name].count <= 0) delete this.itemInventory[name];
+    }
+    decItem(name, amount = 1) {
+        if (!this.itemInventory[name]) return false;
+        this.itemInventory[name].count -= amount;
+        if (this.itemInventory[name].count <= 0) delete this.itemInventory[name];
+        return true;
+    }
+    
     sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Serialize current progress to JSON string
+    exportState() {
+        const state = {
+            characterInventory: this.characterInventory.slice(),
+            itemInventory: JSON.parse(JSON.stringify(this.itemInventory)),
+            currentRates: { ...this.currentRates },
+            // include results grid items (names + rarity + stars + type) so UI can be reconstructed
+            results: Array.from(document.getElementById('resultsGrid').children).map(card => {
+                return {
+                    name: card.querySelector('.result-name')?.textContent || '',
+                    starsText: card.querySelector('.result-stars')?.textContent || '',
+                    rarity: (card.className.match(/rarity-(\w+)/) || [])[1] || 'blue',
+                    type: card.classList.contains('type-character') ? 'character' : 'item'
+                };
+            })
+        };
+        return JSON.stringify(state, null, 2);
+    }
+
+    // Load state object (or JSON string)
+    loadState(stateOrString) {
+        let state = stateOrString;
+        if (typeof stateOrString === 'string') {
+            try {
+                state = JSON.parse(stateOrString);
+            } catch (e) {
+                throw new Error('Invalid JSON');
+            }
+        }
+        // Basic validation and assignment
+        if (state.characterInventory && state.itemInventory) {
+            this.characterInventory = Array.isArray(state.characterInventory) ? state.characterInventory.slice() : [];
+            this.itemInventory = typeof state.itemInventory === 'object' ? JSON.parse(JSON.stringify(state.itemInventory)) : {};
+            if (state.currentRates) this.currentRates = { ...this.currentRates, ...state.currentRates };
+            // rebuild results grid
+            const resultsGrid = document.getElementById('resultsGrid');
+            resultsGrid.innerHTML = '';
+            if (Array.isArray(state.results)) {
+                state.results.forEach(r => {
+                    const card = document.createElement('div');
+                    card.className = `result-card rarity-${r.rarity}` + (r.type === 'character' ? ' type-character' : '');
+                    card.innerHTML = `<div class="result-header"><div class="result-name">${r.name}</div><div class="result-stars">${r.starsText || ''}</div></div><div class="result-type-badge">${r.type === 'character' ? 'Character' : 'Item'}</div>`;
+                    resultsGrid.appendChild(card);
+                });
+            }
+            // update any open inventory/crafting displays and debug inputs
+            this.updateCraftListCounts();
+            if (document.getElementById('debugModal').style.display === 'flex') this.updateDebugInputs();
+            return true;
+        }
+        throw new Error('Invalid state object');
     }
 }
 

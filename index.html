@@ -41,6 +41,9 @@
             <div class="debug-section">
                 <button class="debug-btn" id="debugBtn">C</button>
                 <button class="debug-btn" id="musicBtn">M</button>
+                <button class="debug-btn" id="craftingBtn" title="Crafting">🛠️</button>
+                <button class="debug-btn" id="inventoryBtn" title="Inventory">E</button>
+                <button class="debug-btn" id="saveLoadBtn" title="Save / Load">S</button>
             </div>
         </div>
         
@@ -171,6 +174,102 @@
                         <button class="password-submit" id="musicYes" style="width:120px;">Yes</button>
                         <button class="debug-reset" id="musicNo" style="width:120px;">No</button>
                     </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Crafting Modal -->
+        <div class="password-modal" id="craftingModal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Crafting</h3>
+                    <button class="modal-close" id="closeCraftingModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="craft-list" id="craftList">
+                        <div class="craft-item" data-recipe="superDragon">
+                            <div class="craft-left">
+                                <div class="craft-title">7 × <span class="material-name">Dragon Ball</span> → <strong>Super Dragon Ball</strong></div>
+                                <div class="craft-ingredients">
+                                    <span class="ing">Dragon Ball ×7</span>
+                                </div>
+                            </div>
+                            <div class="craft-right">
+                                <div class="material-count" data-material="Dragon Ball">0</div>
+                                <button class="password-submit craft-btn">Craft</button>
+                            </div>
+                        </div>
+                        <div class="craft-item" data-recipe="bowIgnis">
+                            <div class="craft-left">
+                                <div class="craft-title">Tier I Spiritual Bow Embryo + Book of Ignis → <strong>Bow of Ignis</strong></div>
+                                <div class="craft-ingredients">
+                                    <span class="ing">Tier I Spiritual Bow Embryo ×1</span>
+                                    <span class="ing">Book of Ignis ×1</span>
+                                </div>
+                            </div>
+                            <div class="craft-right">
+                                <div class="material-count" data-material="Tier I Spiritual Bow Embryo">0</div>
+                                <button class="password-submit craft-btn">Craft</button>
+                            </div>
+                        </div>
+                        <div class="craft-item" data-recipe="bookNature">
+                            <div class="craft-left">
+                                <div class="craft-title">Book of Terra + Book of Aqua → <strong>Book of Nature</strong></div>
+                                <div class="craft-ingredients">
+                                    <span class="ing">Book of Terra ×1</span>
+                                    <span class="ing">Book of Aqua ×1</span>
+                                </div>
+                            </div>
+                            <div class="craft-right">
+                                <div class="material-count" data-material="Book of Terra">0</div>
+                                <button class="password-submit craft-btn">Craft</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="craftMessage" class="craft-message" style="margin-top:1rem;color:#b3b3b3;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Inventory Modal -->
+        <div class="debug-modal" id="inventoryModal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content debug-content">
+                <div class="modal-header">
+                    <h3>Inventory</h3>
+                    <button class="modal-close" id="closeInventoryModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+                        <button id="invCharsBtn" class="debug-apply" style="flex:1">Characters</button>
+                        <button id="invItemsBtn" class="debug-reset" style="flex:1">Items</button>
+                    </div>
+                    <div id="inventoryContent" style="max-height:50vh;overflow:auto;color:var(--text-secondary);"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Save/Load Modal -->
+        <div class="password-modal" id="saveLoadModal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Save / Load Progress</h3>
+                    <button class="modal-close" id="closeSaveLoadModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p style="color:var(--text-secondary);margin-bottom:0.5rem;">Exported code (JSON) — copy/store it, or paste a saved JSON to load:</p>
+                    <textarea id="saveTextarea" rows="8" style="width:100%;background:var(--bg-tertiary);border:1px solid var(--border-primary);color:var(--text-primary);padding:0.75rem;border-radius:8px;"></textarea>
+                    <div style="display:flex;gap:0.75rem;margin-top:0.75rem;">
+                        <button class="password-submit" id="saveToLocal" style="flex:1">Save to Local</button>
+                        <button class="debug-apply" id="exportCopy" style="flex:1">Copy Export</button>
+                    </div>
+                    <div style="display:flex;gap:0.75rem;margin-top:0.5rem;">
+                        <button class="debug-reset" id="clearSave" style="flex:1">Clear Local Save</button>
+                        <button class="password-submit" id="importFromTextarea" style="flex:1">Import / Load</button>
+                    </div>
+                    <div id="saveLoadMsg" style="margin-top:0.75rem;color:var(--text-secondary);min-height:1.2rem;"></div>
                 </div>
             </div>
         </div>

@@ -485,6 +485,8 @@ body {
 
 .debug-section {
     margin-top: auto;
+    display: flex;
+    gap: 0.5rem;
 }
 
 .debug-btn {
@@ -545,6 +547,8 @@ body {
 .debug-content {
     max-width: 600px;
 }
+
+.password-modal #saveTextarea { font-family: monospace; font-size:0.9rem; }
 
 .modal-header {
     display: flex;
@@ -709,6 +713,64 @@ body {
     box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
 }
 
+.craft-list .craft-item {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0.75rem 0;
+    border-bottom:1px solid var(--border-primary);
+    gap:1rem;
+}
+
+.craft-left { flex:1; }
+.craft-right { display:flex; align-items:center; gap:0.75rem; min-width:140px; justify-content:flex-end; }
+
+.craft-ingredients { margin-top:0.5rem; display:flex; gap:0.5rem; flex-wrap:wrap; }
+.craft-ingredients .ing {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-primary);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.material-count {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-primary);
+    padding: 0.35rem 0.6rem;
+    border-radius: 8px;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    text-align:center;
+    min-width:44px;
+}
+
+/* craft button states */
+.craft-btn {
+    background: linear-gradient(135deg,#00d4ff,#0099cc);
+    border: none;
+    color: #fff;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight:700;
+    transition: transform .12s ease, opacity .12s ease;
+}
+.craft-btn:active { transform: translateY(1px); }
+.craft-btn.loading { opacity:0.8; pointer-events:none; transform:scale(0.98); }
+.craft-btn.success { background: linear-gradient(135deg,#34d399,#9ae6b4); box-shadow:0 6px 18px rgba(34,197,94,0.12); }
+
+.craft-message { font-size:0.95rem; padding:0.5rem; border-radius:8px; min-height:24px; }
+
+/* Inventory item rarity colors */
+.inv-item .inv-name { font-weight: 700; }
+.inv-item.rarity-blue .inv-name { color: #4a90ff; }
+.inv-item.rarity-purple .inv-name { color: #a855f7; }
+.inv-item.rarity-gold .inv-name { color: #f59e0b; }
+.inv-item.rarity-red .inv-name { color: #ef4444; }
+
 /* Responsive design */
 @media (max-width: 1024px) {
     .app-container {
@@ -747,4 +809,6 @@ body {
         min-width: 160px;
         padding: 0.875rem 2rem;
     }
+    
+    .password-modal .modal-content { max-width: 92%; }
 }
