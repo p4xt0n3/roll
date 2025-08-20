@@ -851,7 +851,7 @@ class GachaSystem {
             }
             case '/neuronactivation': {
                 this.appendCmdLine('Neuron activation: showing monkey.jpg & playing neuronactivation.mp3');
-                this.showImageWithAudio('monkey.png','neuronactivation.mp3');
+                this.showImageWithAudio('monkey.jpg','neuronactivation.mp3');
                 break;
             }
             case '/nahidwin': {
@@ -1171,8 +1171,8 @@ class GachaSystem {
             });
         };
         (async () => {
-            await showThenSwap('nahidwin.png', 2000);
-            await showThenSwap('gojoat.png', 2000);
+            await showThenSwap('nahidwin.jpg', 2000);
+            await showThenSwap('gojoat.jpg', 2000);
             wrap.remove();
         })();
     }
@@ -1226,9 +1226,9 @@ class GachaSystem {
         inner.style.background = 'rgba(255,255,255,0.02)';
         inner.style.padding = '12px 18px';
         inner.style.borderRadius = '8px';
-        const left = document.createElement('img'); left.src = 'kun.png'; left.style.maxHeight = '220px'; left.style.opacity='0';
+        const left = document.createElement('img'); left.src = 'kun.jpg'; left.style.maxHeight = '220px'; left.style.opacity='0';
         const eq = document.createElement('div'); eq.textContent = '='; eq.style.fontSize='48px'; eq.style.color='#fff';
-        const right = document.createElement('img'); right.src = 'chicken.png'; right.style.maxHeight = '220px'; right.style.opacity='0';
+        const right = document.createElement('img'); right.src = 'chicken.jpg'; right.style.maxHeight = '220px'; right.style.opacity='0';
         inner.appendChild(left); inner.appendChild(eq); inner.appendChild(right);
         wrap.appendChild(inner);
         document.body.appendChild(wrap);
