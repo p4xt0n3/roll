@@ -49,7 +49,23 @@ class GachaSystem {
     constructor() {
         this.currentRollType = 1;
         this.isRolling = false;
+        
+        // Original rates for reset functionality
+        this.originalRates = {
+            blueItem: 87,
+            purpleItem: 5,
+            goldItem: 3,
+            redItem: 0.5,
+            purpleChar: 3,
+            goldChar: 1,
+            redChar: 0.5
+        };
+        
+        // Current rates (modifiable)
+        this.currentRates = { ...this.originalRates };
+        
         this.setupEventListeners();
+        this.setupDebugSystem();
     }
     
     setupEventListeners() {
@@ -71,6 +87,107 @@ class GachaSystem {
         });
     }
     
+    setupDebugSystem() {
+        const debugBtn = document.getElementById('debugBtn');
+        const passwordModal = document.getElementById('passwordModal');
+        const debugModal = document.getElementById('debugModal');
+        const passwordInput = document.getElementById('passwordInput');
+        const passwordSubmit = document.getElementById('passwordSubmit');
+        const passwordError = document.getElementById('passwordError');
+        const closePasswordModal = document.getElementById('closePasswordModal');
+        const closeDebugModal = document.getElementById('closeDebugModal');
+        const resetRates = document.getElementById('resetRates');
+        const applyRates = document.getElementById('applyRates');
+        
+        // Open password modal
+        debugBtn.addEventListener('click', () => {
+            passwordModal.style.display = 'flex';
+            passwordInput.value = '';
+            passwordError.style.display = 'none';
+            setTimeout(() => passwordInput.focus(), 100);
+        });
+        
+        // Close modals
+        closePasswordModal.addEventListener('click', () => {
+            passwordModal.style.display = 'none';
+        });
+        
+        closeDebugModal.addEventListener('click', () => {
+            debugModal.style.display = 'none';
+        });
+        
+        // Close on overlay click
+        passwordModal.addEventListener('click', (e) => {
+            if (e.target === passwordModal) {
+                passwordModal.style.display = 'none';
+            }
+        });
+        
+        debugModal.addEventListener('click', (e) => {
+            if (e.target === debugModal) {
+                debugModal.style.display = 'none';
+            }
+        });
+        
+        // Password submission
+        const checkPassword = () => {
+            if (passwordInput.value === '114514') {
+                passwordModal.style.display = 'none';
+                this.openDebugPanel();
+            } else {
+                passwordError.style.display = 'block';
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        };
+        
+        passwordSubmit.addEventListener('click', checkPassword);
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+        
+        // Reset rates
+        resetRates.addEventListener('click', () => {
+            this.currentRates = { ...this.originalRates };
+            this.updateDebugInputs();
+        });
+        
+        // Apply rates
+        applyRates.addEventListener('click', () => {
+            this.applyDebugRates();
+            debugModal.style.display = 'none';
+        });
+    }
+    
+    openDebugPanel() {
+        this.updateDebugInputs();
+        document.getElementById('debugModal').style.display = 'flex';
+    }
+    
+    updateDebugInputs() {
+        document.getElementById('blueItemRate').value = this.currentRates.blueItem;
+        document.getElementById('purpleItemRate').value = this.currentRates.purpleItem;
+        document.getElementById('goldItemRate').value = this.currentRates.goldItem;
+        document.getElementById('redItemRate').value = this.currentRates.redItem;
+        document.getElementById('purpleCharRate').value = this.currentRates.purpleChar;
+        document.getElementById('goldCharRate').value = this.currentRates.goldChar;
+        document.getElementById('redCharRate').value = this.currentRates.redChar;
+    }
+    
+    applyDebugRates() {
+        this.currentRates = {
+            blueItem: parseFloat(document.getElementById('blueItemRate').value) || 0,
+            purpleItem: parseFloat(document.getElementById('purpleItemRate').value) || 0,
+            goldItem: parseFloat(document.getElementById('goldItemRate').value) || 0,
+            redItem: parseFloat(document.getElementById('redItemRate').value) || 0,
+            purpleChar: parseFloat(document.getElementById('purpleCharRate').value) || 0,
+            goldChar: parseFloat(document.getElementById('goldCharRate').value) || 0,
+            redChar: parseFloat(document.getElementById('redCharRate').value) || 0
+        };
+    }
+    
     selectRollType(type) {
         this.currentRollType = type;
         
@@ -88,48 +205,56 @@ class GachaSystem {
     rollSingle() {
         const rand = Math.random() * 100;
         
-        if (rand < 0.5) {
-            // 0.5% red character
+        // Use current rates instead of hardcoded values
+        const redCharThreshold = this.currentRates.redChar;
+        const redItemThreshold = redCharThreshold + this.currentRates.redItem;
+        const goldCharThreshold = redItemThreshold + this.currentRates.goldChar;
+        const goldItemThreshold = goldCharThreshold + this.currentRates.goldItem;
+        const purpleCharThreshold = goldItemThreshold + this.currentRates.purpleChar;
+        const purpleItemThreshold = purpleCharThreshold + this.currentRates.purpleItem;
+        
+        if (rand < redCharThreshold) {
+            // Red character
             return {
                 type: 'character',
                 rarity: 'red',
                 name: this.getRandomItem(gameData.characters.red),
                 stars: 6
             };
-        } else if (rand < 1) {
-            // 0.5% red item
+        } else if (rand < redItemThreshold) {
+            // Red item
             return {
                 type: 'item',
                 rarity: 'red',
                 name: this.getRandomItem(gameData.items.red),
                 stars: 6
             };
-        } else if (rand < 2) {
-            // 1% gold character
+        } else if (rand < goldCharThreshold) {
+            // Gold character
             return {
                 type: 'character',
                 rarity: 'gold',
                 name: this.getRandomItem(gameData.characters.gold),
                 stars: 5
             };
-        } else if (rand < 5) {
-            // 3% gold item
+        } else if (rand < goldItemThreshold) {
+            // Gold item
             return {
                 type: 'item',
                 rarity: 'gold',
                 name: this.getRandomItem(gameData.items.gold),
                 stars: 5
             };
-        } else if (rand < 8) {
-            // 3% purple character
+        } else if (rand < purpleCharThreshold) {
+            // Purple character
             return {
                 type: 'character',
                 rarity: 'purple',
                 name: this.getRandomItem(gameData.characters.purple),
                 stars: 4
             };
-        } else if (rand < 13) {
-            // 5% purple item
+        } else if (rand < purpleItemThreshold) {
+            // Purple item
             return {
                 type: 'item',
                 rarity: 'purple',
@@ -137,7 +262,7 @@ class GachaSystem {
                 stars: 4
             };
         } else {
-            // 87% blue item
+            // Blue item
             return {
                 type: 'item',
                 rarity: 'blue',
