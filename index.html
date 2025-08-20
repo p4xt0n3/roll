@@ -1,0 +1,84 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Tale of Universe : Gacha Roll Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="sidebar">
+            <div class="logo">
+                <h1>THE TALE OF UNIVERSE</h1>
+                <span class="subtitle">GACHA ROLL SIMULATOR</span>
+            </div>
+            
+            <div class="currency-display">
+                <div class="currency-item">
+                    <span class="currency-icon">💎</span>
+                    <span class="currency-amount">∞</span>
+                </div>
+            </div>
+            
+            <div class="roll-options">
+                <button class="roll-option active" data-type="1">
+                    <div class="option-header">
+                        <span class="option-title">Single Pull</span>
+                        <span class="option-cost">FREE</span>
+                    </div>
+                    <div class="option-description">Roll once for a chance at rare items</div>
+                </button>
+                
+                <button class="roll-option" data-type="10">
+                    <div class="option-header">
+                        <span class="option-title">10-Pull</span>
+                        <span class="option-cost">FREE</span>
+                    </div>
+                    <div class="option-description">Roll 10 times with guaranteed 4★ or higher</div>
+                </button>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="roll-interface">
+                <div class="roll-header">
+                    <h2 class="interface-title">Standard Banner</h2>
+                    <div class="banner-info">All characters and items available</div>
+                </div>
+                
+                <div class="roll-action">
+                    <button class="primary-roll-btn" id="executeRoll">
+                        <span class="btn-text">ROLL NOW</span>
+                        <div class="btn-shine"></div>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <div class="results-header">
+                    <h3>Recent Pulls</h3>
+                    <button class="clear-results" id="clearResults">Clear All</button>
+                </div>
+                <div class="results-grid" id="resultsGrid"></div>
+            </div>
+        </div>
+        
+        <div class="roll-animation" id="rollAnimation">
+            <div class="animation-overlay"></div>
+            <div class="animation-content">
+                <div class="pull-indicator">
+                    <div class="pull-orb"></div>
+                    <div class="pull-rings">
+                        <div class="ring ring-1"></div>
+                        <div class="ring ring-2"></div>
+                        <div class="ring ring-3"></div>
+                    </div>
+                </div>
+                <div class="pull-text">Analyzing...</div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="script.js"></script>
+</body>
+</html>
