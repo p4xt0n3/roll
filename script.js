@@ -29,6 +29,9 @@ const gameData = {
             "The Card", "Rubix of 6th Stage Seal", "The All-See Eye of 333", "Requiem Arrow", "The Perfect DNA",
             "The Manual of ⭕💴", "Level V Authority Keycard (G Foundation)", "True Devourer of All Souls",
             "Miyabi's Sealed Katana"
+        ],
+        black: [
+            "GOD IS LOVE YOU"
         ]
     },
     characters: {
@@ -62,6 +65,7 @@ class GachaSystem {
             purpleItem: 5,
             goldItem: 3,
             redItem: 0.5,
+            blackItem: 0.000333,
             purpleChar: 3,
             goldChar: 1,
             redChar: 0.5
@@ -136,6 +140,13 @@ class GachaSystem {
         const closeDebugModal = document.getElementById('closeDebugModal');
         const resetRates = document.getElementById('resetRates');
         const applyRates = document.getElementById('applyRates');
+        const DEBUG_UNLOCK_KEY = 'ttou_debug_unlocked';
+        
+        // persist debug unlock so password is not repeatedly required during the session
+        if (sessionStorage.getItem(DEBUG_UNLOCK_KEY) === '1') {
+            // already unlocked this session - directly open debug panel (keeps password not required)
+            // do nothing here, user still must click debug button to open UI but won't be asked again when re-opening after correct password
+        }
         
         // Open password modal
         debugBtn.addEventListener('click', () => {
@@ -187,6 +198,7 @@ class GachaSystem {
         const checkPassword = () => {
             if (passwordInput.value === '114514') {
                 passwordModal.style.display = 'none';
+                sessionStorage.setItem(DEBUG_UNLOCK_KEY, '1');
                 this.openDebugPanel();
             } else {
                 passwordError.style.display = 'block';
@@ -292,6 +304,23 @@ class GachaSystem {
     openDebugPanel() {
         this.updateDebugInputs();
         document.getElementById('debugModal').style.display = 'flex';
+        
+        // wire up command prompt toggle and handlers (only once)
+        if (!this._cmdSetup) {
+            this._cmdSetup = true;
+            const openCmdBtn = document.getElementById('openCmdBtn');
+            const cmdArea = document.getElementById('cmdArea');
+            const cmdOutput = document.getElementById('cmdOutput');
+            const cmdInput = document.getElementById('cmdInput');
+            const cmdEnter = document.getElementById('cmdEnter');
+            openCmdBtn.addEventListener('click', () => {
+                const showing = cmdArea.style.display === 'block';
+                cmdArea.style.display = showing ? 'none' : 'block';
+                if (!showing) { cmdInput.focus(); this.appendCmdLine('Made by G Foundation, All Right Served'); }
+            });
+            cmdEnter.addEventListener('click', () => this.handleCommand(cmdInput.value.trim(), cmdOutput, cmdInput));
+            cmdInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { this.handleCommand(cmdInput.value.trim(), cmdOutput, cmdInput); } });
+        }
     }
     
     updateDebugInputs() {
@@ -299,6 +328,7 @@ class GachaSystem {
         document.getElementById('purpleItemRate').value = this.currentRates.purpleItem;
         document.getElementById('goldItemRate').value = this.currentRates.goldItem;
         document.getElementById('redItemRate').value = this.currentRates.redItem;
+        document.getElementById('blackItemRate').value = this.currentRates.blackItem;
         document.getElementById('purpleCharRate').value = this.currentRates.purpleChar;
         document.getElementById('goldCharRate').value = this.currentRates.goldChar;
         document.getElementById('redCharRate').value = this.currentRates.redChar;
@@ -310,6 +340,7 @@ class GachaSystem {
             purpleItem: parseFloat(document.getElementById('purpleItemRate').value) || 0,
             goldItem: parseFloat(document.getElementById('goldItemRate').value) || 0,
             redItem: parseFloat(document.getElementById('redItemRate').value) || 0,
+            blackItem: parseFloat(document.getElementById('blackItemRate').value) || 0,
             purpleChar: parseFloat(document.getElementById('purpleCharRate').value) || 0,
             goldChar: parseFloat(document.getElementById('goldCharRate').value) || 0,
             redChar: parseFloat(document.getElementById('redCharRate').value) || 0
@@ -332,16 +363,19 @@ class GachaSystem {
     
     rollSingle() {
         const rand = Math.random() * 100;
-        
-        // Use current rates instead of hardcoded values
-        const redCharThreshold = this.currentRates.redChar;
+
+        const blackItemThreshold = this.currentRates.blackItem || 0;
+        const redCharThreshold = blackItemThreshold + this.currentRates.redChar;
         const redItemThreshold = redCharThreshold + this.currentRates.redItem;
         const goldCharThreshold = redItemThreshold + this.currentRates.goldChar;
         const goldItemThreshold = goldCharThreshold + this.currentRates.goldItem;
         const purpleCharThreshold = goldItemThreshold + this.currentRates.purpleChar;
         const purpleItemThreshold = purpleCharThreshold + this.currentRates.purpleItem;
+        const blueThreshold = purpleItemThreshold + this.currentRates.blueItem;
         
-        if (rand < redCharThreshold) {
+        if (rand < blackItemThreshold) {
+            return { type: 'item', rarity: 'black', name: this.getRandomItem(gameData.items.black), stars: 0 };
+        } else if (rand < redCharThreshold) {
             // Red character
             return {
                 type: 'character',
@@ -442,6 +476,7 @@ class GachaSystem {
         const hasRed = rarities.includes('red');
         const hasGold = rarities.includes('gold');
         const hasPurple = rarities.includes('purple');
+        const hasBlack = rarities.includes('black');
         
         // Initial phase
         pullText.textContent = 'Analyzing...';
@@ -449,6 +484,28 @@ class GachaSystem {
         overlay.style.background = 'rgba(26, 39, 68, 0.95)';
         
         await this.sleep(1500);
+        
+        // If a black special appears, immediately switch to dark/shaking GOD text reveal
+        if (hasBlack) {
+            // hide default indicators
+            pullOrb.style.display = 'none';
+            pullText.style.display = 'none';
+            overlay.style.background = '#000';
+            overlay.style.opacity = '1';
+            // create big shaking text element
+            let godText = document.createElement('div');
+            godText.className = 'god-roll-text';
+            godText.textContent = 'GOD IS LOVE YOU';
+            animationContainer.querySelector('.animation-content').appendChild(godText);
+            // keep it for a dramatic reveal period
+            await this.sleep(3000);
+            // remove the shaking text and restore defaults
+            godText.remove();
+            pullOrb.style.display = '';
+            pullText.style.display = '';
+            overlay.style.background = 'rgba(10, 10, 15, 0.95)';
+            // continue with the rest of the sequence (allow other rarities handled below)
+        }
         
         if (hasPurple || hasGold || hasRed) {
             pullText.textContent = 'Energy Surge...';
@@ -525,7 +582,8 @@ class GachaSystem {
             card.classList.add('type-character');
         }
         
-        const stars = '★'.repeat(result.stars);
+        // for black special item, replace stars with the phrase
+        const stars = result.rarity === 'black' ? 'GOD IS LOVE YOU' : '★'.repeat(result.stars);
         
         card.innerHTML = `
             <div class="result-header">
@@ -534,6 +592,10 @@ class GachaSystem {
             </div>
             <div class="result-type-badge">${result.type === 'character' ? 'Character' : 'Item'}</div>
         `;
+        if (result.rarity === 'black') {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', () => this.triggerGodSequence());
+        }
         
         return card;
     }
@@ -747,6 +809,224 @@ class GachaSystem {
         }
         throw new Error('Invalid state object');
     }
+
+    appendCmdLine(text) {
+        const out = document.getElementById('cmdOutput');
+        if (!out) return;
+        out.textContent += '\n' + text;
+        out.scrollTop = out.scrollHeight;
+    }
+
+    handleCommand(raw, outEl, inputEl) {
+        if (!raw) return;
+        this.appendCmdLine('> ' + raw);
+        inputEl.value = '';
+        const parts = raw.match(/(?:[^\s"]+|"[^"]*")+/g) || [];
+        const cmd = parts[0].toLowerCase();
+        const arg = parts.slice(1).join(' ').replace(/^"|"$/g, '').trim();
+        switch (cmd) {
+            case '/help':
+                this.appendCmdLine('/help /giveall /clearall /reload /changepagetitle \"input\" /pagetitlereset /light /dark /godisloveyou /color \"1,2,3\" /exit /rock');
+                break;
+            case '/giveall':
+                // give every item once and all characters once
+                Object.values(gameData.items).flat().forEach(name => this.incItem(name, 1, this.inferRarityFromList(name)));
+                Object.values(gameData.characters).flat().forEach(name => this.characterInventory.push(name));
+                this.appendCmdLine('All items and characters have been added to inventory.');
+                this.updateCraftListCounts();
+                break;
+            case '/clearall':
+                this.characterInventory = [];
+                this.itemInventory = {};
+                this.appendCmdLine('Inventory cleared.');
+                break;
+            case '/reload':
+                this.appendCmdLine('Reloading page...');
+                setTimeout(()=>location.reload(),400);
+                break;
+            case '/changepagetitle':
+                if (arg) { document.title = arg; this.appendCmdLine('Page title changed to: ' + arg); } else this.appendCmdLine('Usage: /changepagetitle \"Your Title\"');
+                break;
+            case '/pagetitlereset':
+                document.title = 'The Tale of Universe : Gacha Roll Simulator';
+                this.appendCmdLine('Page title reset.');
+                break;
+            case '/light':
+                document.documentElement.style.setProperty('--bg-primary','#ffffff');
+                document.documentElement.style.setProperty('--bg-secondary','#f5f5f5');
+                document.documentElement.style.setProperty('--bg-tertiary','#ffffff');
+                document.documentElement.style.setProperty('--text-primary','#0a0a0f');
+                this.appendCmdLine('Light mode enabled.');
+                break;
+            case '/dark':
+                document.documentElement.style.setProperty('--bg-primary','#0a0a0f');
+                document.documentElement.style.setProperty('--bg-secondary','#161620');
+                document.documentElement.style.setProperty('--bg-tertiary','#1e1e2a');
+                document.documentElement.style.setProperty('--text-primary','#ffffff');
+                this.appendCmdLine('Dark mode enabled.');
+                break;
+            case '/godisloveyou':
+                this.appendCmdLine('Triggering GOD IS LOVE YOU sequence...');
+                this.triggerGodSequence();
+                break;
+            case '/color':
+                // map numbers to colors (basic implementation: change accent-primary)
+                const map = { '1':'#ef4444','2':'#4a90ff','3':'#10b981','4':'#a855f7','5':'#f59e0b','6':'#ffffff','7':'#fb923c' };
+                if (!arg) { this.appendCmdLine('Usage: /color \"1,2,3\"'); break; }
+                const nums = arg.split(',').map(s=>s.trim()).filter(Boolean);
+                if (nums.length>0) {
+                    const pick = map[nums[0]] || '#00d4ff';
+                    document.documentElement.style.setProperty('--accent-primary', pick);
+                    this.appendCmdLine('Accent color changed.');
+                }
+                break;
+            case '/exit':
+                // hide cmd area and show rates (the modal already contains rates)
+                document.getElementById('cmdArea').style.display = 'none';
+                this.appendCmdLine('Exited command prompt.');
+                break;
+            case '/rock':
+                this.appendCmdLine('Playing rockstare...');
+                this.showRockStare();
+                break;
+            default:
+                this.appendCmdLine('Unknown command. Type /help for a list of commands.');
+        }
+    };
+
+    inferRarityFromList(name) {
+        for (const k of ['black','red','gold','purple','blue']) {
+            if (gameData.items[k] && gameData.items[k].includes(name)) return k;
+        }
+        return 'blue';
+    };
+
+    showRockStare() {
+        if (document.getElementById('rockstare-wrap')) return;
+        const wrap = document.createElement('div');
+        wrap.id = 'rockstare-wrap';
+        wrap.style.position = 'fixed';
+        wrap.style.inset = '0';
+        wrap.style.display = 'flex';
+        wrap.style.alignItems = 'center';
+        wrap.style.justifyContent = 'center';
+        wrap.style.zIndex = 99999;
+        wrap.style.background = 'rgba(0,0,0,0.6)';
+        const img = document.createElement('img');
+        img.src = 'rockstare.jpg';
+        img.style.maxWidth = '80%';
+        img.style.borderRadius = '8px';
+        img.style.boxShadow = '0 30px 80px rgba(0,0,0,0.6)';
+        wrap.appendChild(img);
+        document.body.appendChild(wrap);
+        const audio = new Audio('rockstare.mp3');
+        audio.play().catch(()=>{});
+        audio.addEventListener('ended', ()=> { try{ wrap.remove(); }catch(e){} });
+        // safety remove after 12s if audio fails
+        setTimeout(()=>{ if (document.getElementById('rockstare-wrap')) try{ wrap.remove(); }catch(e){} }, 12000);
+    };
+
+    triggerGodSequence() {
+        // prevent multiple
+        if (document.querySelector('.god-overlay')) return;
+        const originalTitle = document.title;
+        document.title = 'GOD IS LOVE YOU';
+        // overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'god-overlay';
+        overlay.innerHTML = `<div class="god-center" id="godCenter">GOD IS LOVE YOU</div>`;
+        document.body.appendChild(overlay);
+        // start sequence
+        // phase timings: show center 3s, then spawn small texts ramping 5s, then letters input
+        setTimeout(() => {
+            const spawnDuration = 5000;
+            const smalls = [];
+            let start = performance.now();
+            const spawnLoop = (t) => {
+                const elapsed = t - start;
+                // spawn rate increases with time
+                const progress = Math.min(1, elapsed / spawnDuration);
+                const spawnPerFrame = 1 + Math.floor(progress * 6);
+                for (let i=0;i<spawnPerFrame;i++){
+                    const span = document.createElement('div');
+                    span.className = 'god-small';
+                    span.textContent = 'GOD IS LOVE YOU';
+                    const size = 10 + Math.random() * 18;
+                    span.style.fontSize = size + 'px';
+                    span.style.left = Math.random() * 100 + '%';
+                    span.style.top = Math.random() * 100 + '%';
+                    span.style.opacity = '0';
+                    overlay.appendChild(span);
+                    smalls.push(span);
+                    // animate in/out
+                    const dx = (Math.random()-0.5)*200;
+                    const dy = (Math.random()-0.5)*200;
+                    span.animate([
+                        { transform: 'translate(0,0)', opacity: 0 },
+                        { transform: `translate(${dx}px, ${dy}px)`, opacity: 1 },
+                        { transform: `translate(${dx*1.5}px, ${dy*1.5}px)`, opacity: 0 }
+                    ], { duration: 3000 + Math.random()*3000, easing: 'ease-in-out' }).onfinish = () => {
+                        try { span.remove(); }catch(e){}
+                    };
+                }
+                if (elapsed < spawnDuration) requestAnimationFrame(spawnLoop);
+                else {
+                    // after spawnDuration + short wait, remove smalls and show letters
+                    setTimeout(() => {
+                        // remove any lingering small nodes
+                        document.querySelectorAll('.god-small').forEach(n=>n.remove());
+                        this.showGodLetters(overlay, originalTitle);
+                    }, 800);
+                }
+            };
+            requestAnimationFrame(spawnLoop);
+        }, 3000);
+    };
+
+    showGodLetters(overlay, originalTitle) {
+        // build spaced letters "G O D I S L O V E M E"
+        const phrase = 'GODISLOVEME';
+        const container = document.createElement('div');
+        container.className = 'god-letters';
+        overlay.appendChild(container);
+        // create letter buttons
+        const buttons = [];
+        for (let i=0;i<phrase.length;i++){
+            const ch = phrase[i];
+            const btn = document.createElement('div');
+            btn.className = 'god-letter';
+            btn.textContent = ch;
+            btn.dataset.letter = ch;
+            container.appendChild(btn);
+            buttons.push(btn);
+        }
+        // interactive sequence: user must click letters in order
+        let idx = 0;
+        const tryFinish = () => {
+            if (idx >= phrase.length) {
+                // restore page after brief success flash
+                setTimeout(() => {
+                    overlay.remove();
+                    document.title = originalTitle;
+                }, 400);
+            }
+        };
+        buttons.forEach((btn, i) => {
+            btn.addEventListener('click', () => {
+                if (i === idx && btn.dataset.letter === phrase[idx]) {
+                    btn.classList.remove('wrong');
+                    btn.classList.add('correct');
+                    btn.style.pointerEvents = 'none';
+                    idx++;
+                    tryFinish();
+                } else {
+                    // wrong click: mark red briefly
+                    btn.classList.add('wrong');
+                    setTimeout(()=>btn.classList.remove('wrong'), 600);
+                }
+            });
+        });
+    }
 }
 
 // Animation keyframes for shake effects
@@ -762,6 +1042,29 @@ const shakeKeyframes = `
     25% { transform: translate(-50%, -50%) translateX(-10px) translateY(-5px); }
     50% { transform: translate(-50%, -50%) translateX(10px) translateY(5px); }
     75% { transform: translate(-50%, -50%) translateX(-8px) translateY(2px); }
+}
+
+/* shaking GOD text used during black-tier reveal */
+.god-roll-text {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    font-weight: 900;
+    font-size: clamp(28px, 8vw, 96px);
+    color: #fff;
+    letter-spacing: 0.02em;
+    text-align: center;
+    z-index: 1002;
+    animation: godShake 0.35s ease-in-out infinite;
+    text-shadow: 0 0 30px rgba(255,255,255,0.06);
+}
+@keyframes godShake {
+    0% { transform: translate(-50%,-50%) rotate(0deg) scale(1); }
+    25% { transform: translate(-50%,-50%) rotate(-2deg) scale(1.02); }
+    50% { transform: translate(-50%,-50%) rotate(2deg) scale(1.01); }
+    75% { transform: translate(-50%,-50%) rotate(-1deg) scale(1.02); }
+    100% { transform: translate(-50%,-50%) rotate(0deg) scale(1); }
 }
 `;
 

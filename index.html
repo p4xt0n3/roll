@@ -109,6 +109,19 @@
                     <button class="modal-close" id="closeDebugModal">&times;</button>
                 </div>
                 <div class="modal-body">
+                    <!-- Command prompt toggle and area -->
+                    <div class="cmd-toolbar" style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+                        <button id="openCmdBtn" class="debug-apply" style="flex:0 0 auto;">C</button>
+                        <div style="flex:1;color:var(--text-secondary);align-self:center;">Command Prompt</div>
+                    </div>
+                    <div id="cmdArea" style="display:none;">
+                        <div id="cmdOutput" class="cmd-output" style="background:var(--bg-tertiary);border:1px solid var(--border-primary);padding:0.75rem;border-radius:8px;height:180px;overflow:auto;font-family: 'Courier New', monospace;color:#fff;font-size:13px;">Made by G Foundation, All Right Served\n</div>
+                        <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+                            <input id="cmdInput" style="flex:1;background:var(--bg-primary);border:1px solid var(--border-primary);padding:0.5rem;border-radius:6px;color:#fff;font-family:'Courier New', monospace;" placeholder="/help">
+                            <button id="cmdEnter" class="password-submit" style="flex:0 0 120px;">Enter</button>
+                        </div>
+                    </div>
+                    
                     <div class="rate-section">
                         <h4>Item Rates</h4>
                         <div class="rate-group">
@@ -128,7 +141,12 @@
                         </div>
                         <div class="rate-group">
                             <label>Red Items (6★):</label>
-                            <input type="number" id="redItemRate" step="0.1" min="0" max="100" value="0.5">
+                            <input type="number" id="redItemRate" step="0.000001" min="0" max="100" value="0.5">
+                            <span>%</span>
+                        </div>
+                        <div class="rate-group">
+                            <label>Black Item (Special):</label>
+                            <input type="number" id="blackItemRate" step="0.000001" min="0" max="100" value="0.000333">
                             <span>%</span>
                         </div>
                     </div>
