@@ -826,8 +826,52 @@ class GachaSystem {
         const arg = parts.slice(1).join(' ').replace(/^"|"$/g, '').trim();
         switch (cmd) {
             case '/help':
-                this.appendCmdLine('/help /giveall /clearall /reload /changepagetitle \"input\" /pagetitlereset /light /dark /godisloveyou /color \"1,2,3\" /exit /rock');
+                this.appendCmdLine('/help /giveall /clearall /reload /changepagetitle \"input\" /pagetitlereset /light /dark /godisloveyou /color \"1,2,3,4,5,6,7\" /exit /rock /roll \"x\" /pagespin \"speed\" \"time\" /neuronactivation /nahidwin /ttou /rickroll /xhz');
                 break;
+            case '/roll': {
+                // /roll "x" - numeric or 1/10
+                const x = parseInt(arg) || 1;
+                const count = Math.max(1, Math.min(100, x)); // sane clamp
+                this.appendCmdLine(`Rolling ${count}x...`);
+                // temporarily set roll type and execute
+                const prev = this.currentRollType;
+                this.currentRollType = count;
+                this.executeRoll();
+                this.currentRollType = prev;
+                break;
+            }
+            case '/pagespin': {
+                // /pagespin "speed" "time" - speed in deg/sec, time in seconds
+                const parts = arg.split(/\s+/).filter(Boolean);
+                const speed = parseFloat(parts[0]) || 360;
+                const timeSec = parseFloat(parts[1]) || 2;
+                this.appendCmdLine(`Spinning page at ${speed}°/s for ${timeSec}s...`);
+                this.pagespinEffect(speed, timeSec);
+                break;
+            }
+            case '/neuronactivation': {
+                this.appendCmdLine('Neuron activation: showing monkey.jpg & playing neuronactivation.mp3');
+                this.showImageWithAudio('monkey.png','neuronactivation.mp3');
+                break;
+            }
+            case '/nahidwin': {
+                this.appendCmdLine('Playing nahidwin → gojoat sequence');
+                this.sequenceNahidGojo();
+                break;
+            }
+            case '/ttou':
+                window.location.href = 'https://p4xt0n3.github.io/ttou';
+                break;
+            case '/rickroll': {
+                this.appendCmdLine('Opening Rickroll...');
+                this.rickroll();
+                break;
+            }
+            case '/xhz': {
+                this.appendCmdLine('Showing XHZ images...');
+                this.showXhz();
+                break;
+            }
             case '/giveall':
                 // give every item once and all characters once
                 Object.values(gameData.items).flat().forEach(name => this.incItem(name, 1, this.inferRarityFromList(name)));
@@ -872,7 +916,7 @@ class GachaSystem {
             case '/color':
                 // map numbers to colors (basic implementation: change accent-primary)
                 const map = { '1':'#ef4444','2':'#4a90ff','3':'#10b981','4':'#a855f7','5':'#f59e0b','6':'#ffffff','7':'#fb923c' };
-                if (!arg) { this.appendCmdLine('Usage: /color \"1,2,3\"'); break; }
+                if (!arg) { this.appendCmdLine('Usage: /color \"1,2,3,4,5,6,7\"'); break; }
                 const nums = arg.split(',').map(s=>s.trim()).filter(Boolean);
                 if (nums.length>0) {
                     const pick = map[nums[0]] || '#00d4ff';
@@ -1026,6 +1070,170 @@ class GachaSystem {
                 }
             });
         });
+    }
+
+    // New helpers for added commands
+    pagespinEffect(speedDegPerSec = 360, durationSec = 2) {
+        // apply smooth rotation then reset
+        const root = document.documentElement;
+        // create transform wrapper
+        if (document.getElementById('pagespin-wrap')) return;
+        const wrap = document.createElement('div');
+        wrap.id = 'pagespin-wrap';
+        wrap.style.position = 'fixed';
+        wrap.style.inset = '0';
+        wrap.style.zIndex = '99998';
+        wrap.style.pointerEvents = 'none';
+        // use CSS animation via transform origin center
+        wrap.style.transition = `transform ${durationSec}s cubic-bezier(.2,.8,.2,1)`;
+        document.body.appendChild(wrap);
+        // move existing body children into wrapper
+        while (document.body.firstChild && document.body.firstChild !== wrap) {
+            wrap.appendChild(document.body.firstChild);
+        }
+        // perform rotation by applying CSS animation loop via requestAnimationFrame
+        const start = performance.now();
+        const end = start + durationSec * 1000;
+        const step = (t) => {
+            const now = performance.now();
+            const elapsed = Math.min(now - start, durationSec * 1000);
+            const angle = (speedDegPerSec * (elapsed / 1000)) % 360;
+            wrap.style.transform = `rotate(${angle}deg)`;
+            if (now < end) requestAnimationFrame(step);
+            else {
+                // smooth reset to 0 rotation
+                wrap.style.transition = `transform 1s ease`;
+                wrap.style.transform = `rotate(0deg)`;
+                setTimeout(() => {
+                    // unwrap children back to body
+                    while (wrap.firstChild) document.body.appendChild(wrap.firstChild);
+                    wrap.remove();
+                }, 1000);
+            }
+        };
+        requestAnimationFrame(step);
+    }
+
+    showImageWithAudio(imgSrc, audioSrc) {
+        if (document.getElementById('fx-media-wrap')) return;
+        const wrap = document.createElement('div');
+        wrap.id = 'fx-media-wrap';
+        wrap.style.position = 'fixed';
+        wrap.style.inset = '0';
+        wrap.style.zIndex = '99999';
+        wrap.style.display = 'flex';
+        wrap.style.alignItems = 'center';
+        wrap.style.justifyContent = 'center';
+        wrap.style.background = 'rgba(0,0,0,0.6)';
+        const img = document.createElement('img');
+        img.src = imgSrc;
+        img.style.maxWidth = '70%';
+        img.style.opacity = '0';
+        img.style.transition = 'opacity .4s ease';
+        wrap.appendChild(img);
+        document.body.appendChild(wrap);
+        requestAnimationFrame(()=> img.style.opacity = '1');
+        const audio = new Audio(audioSrc);
+        audio.play().catch(()=>{});
+        audio.addEventListener('ended', ()=> {
+            img.style.opacity = '0';
+            setTimeout(()=>{ try{ wrap.remove(); }catch(e){} }, 500);
+        });
+        // safety timeout
+        setTimeout(()=>{ if (document.getElementById('fx-media-wrap')) try{ document.getElementById('fx-media-wrap').remove(); }catch(e){} }, 20000);
+    }
+
+    sequenceNahidGojo() {
+        if (document.getElementById('seq-wrap')) return;
+        const wrap = document.createElement('div');
+        wrap.id = 'seq-wrap';
+        wrap.style.position = 'fixed';
+        wrap.style.inset = '0';
+        wrap.style.zIndex = '99999';
+        wrap.style.display = 'flex';
+        wrap.style.alignItems = 'center';
+        wrap.style.justifyContent = 'center';
+        wrap.style.background = 'rgba(0,0,0,0.6)';
+        document.body.appendChild(wrap);
+        const showThenSwap = (src, holdMs) => {
+            return new Promise(res => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.style.maxWidth = '70%';
+                img.style.opacity = '0';
+                img.style.transition = 'opacity .25s ease';
+                wrap.appendChild(img);
+                requestAnimationFrame(()=> img.style.opacity = '1');
+                setTimeout(()=> {
+                    img.style.opacity = '0';
+                    setTimeout(()=> { img.remove(); res(); }, 300);
+                }, holdMs);
+            });
+        };
+        (async () => {
+            await showThenSwap('nahidwin.png', 2000);
+            await showThenSwap('gojoat.png', 2000);
+            wrap.remove();
+        })();
+    }
+
+    rickroll() {
+        if (document.getElementById('rick-wrap')) return;
+        // open a centered popup-like overlay with an embedded YouTube iframe
+        const wrap = document.createElement('div');
+        wrap.id = 'rick-wrap';
+        wrap.style.position = 'fixed';
+        wrap.style.inset = '0';
+        wrap.style.zIndex = '99999';
+        wrap.style.display = 'flex';
+        wrap.style.alignItems = 'center';
+        wrap.style.justifyContent = 'center';
+        wrap.style.background = 'rgba(0,0,0,0.85)';
+        const box = document.createElement('div');
+        box.style.width = '80%';
+        box.style.maxWidth = '900px';
+        box.style.aspectRatio = '16/9';
+        box.style.background = '#000';
+        box.style.borderRadius = '8px';
+        box.style.overflow = 'hidden';
+        const iframe = document.createElement('iframe');
+        iframe.src = 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0';
+        iframe.allow = 'autoplay; encrypted-media';
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.border = '0';
+        box.appendChild(iframe);
+        wrap.appendChild(box);
+        document.body.appendChild(wrap);
+        wrap.addEventListener('click', (e) => { if (e.target===wrap) wrap.remove(); });
+    }
+
+    showXhz() {
+        if (document.getElementById('xhz-wrap')) return;
+        const wrap = document.createElement('div');
+        wrap.id = 'xhz-wrap';
+        wrap.style.position = 'fixed';
+        wrap.style.inset = '0';
+        wrap.style.zIndex = '99999';
+        wrap.style.display = 'flex';
+        wrap.style.alignItems = 'center';
+        wrap.style.justifyContent = 'center';
+        wrap.style.background = 'rgba(0,0,0,0.7)';
+        const inner = document.createElement('div');
+        inner.style.display = 'flex';
+        inner.style.alignItems = 'center';
+        inner.style.gap = '12px';
+        inner.style.background = 'rgba(255,255,255,0.02)';
+        inner.style.padding = '12px 18px';
+        inner.style.borderRadius = '8px';
+        const left = document.createElement('img'); left.src = 'kun.png'; left.style.maxHeight = '220px'; left.style.opacity='0';
+        const eq = document.createElement('div'); eq.textContent = '='; eq.style.fontSize='48px'; eq.style.color='#fff';
+        const right = document.createElement('img'); right.src = 'chicken.png'; right.style.maxHeight = '220px'; right.style.opacity='0';
+        inner.appendChild(left); inner.appendChild(eq); inner.appendChild(right);
+        wrap.appendChild(inner);
+        document.body.appendChild(wrap);
+        requestAnimationFrame(()=> { left.style.transition='opacity .25s'; right.style.transition='opacity .25s'; left.style.opacity='1'; right.style.opacity='1';});
+        setTimeout(()=>{ left.style.opacity='0'; right.style.opacity='0'; setTimeout(()=>wrap.remove(),400); }, 2500);
     }
 }
 
