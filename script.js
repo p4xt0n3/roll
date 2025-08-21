@@ -81,6 +81,9 @@ class GachaSystem {
         this.setupDebugSystem();
         // show startup import/name modal on launch
         setTimeout(()=> this.initStartupFlow(), 100);
+
+        // start autosave (every 60s)
+        this.setupAutoSave();
     }
     
     setupEventListeners() {
@@ -152,6 +155,22 @@ class GachaSystem {
         document.getElementById('executeSell').addEventListener('click', () => {
             this.executeSell();
         });
+
+        // Save Progress button (immediately trigger a manual save)
+        const spBtn = document.getElementById('saveProgressBtn');
+        if (spBtn) {
+            spBtn.addEventListener('click', async () => {
+                try {
+                    await this.performAutoSave(false);
+                    // also update save modal textarea preview if it's open
+                    const ta = document.getElementById('saveTextarea');
+                    if (ta) ta.value = this.exportState();
+                    this.showSaveToast('Saved', 900);
+                } catch (e) {
+                    this.showSaveToast('Save Failed', 900);
+                }
+            });
+        }
         
         // Close on overlay click
         document.getElementById('sellModal').addEventListener('click', (e) => {
@@ -1582,6 +1601,60 @@ class GachaSystem {
             welcome.style.display='block';
             setTimeout(()=> { modal.style.display='none'; this.updateStellarCoinDisplay(); }, 900);
         });
+    }
+
+    // add autosave support + UI toast functions
+    setupAutoSave() {
+        // show an initial quick save to ensure baseline saved
+        this.performAutoSave(true);
+        // then schedule every 60 seconds
+        this._autosaveInterval = setInterval(() => this.performAutoSave(), 60 * 1000);
+        // also ensure we save on page unload
+        window.addEventListener('beforeunload', () => {
+            try { localStorage.setItem('ttou_save', this.exportState()); } catch(e){}
+        });
+    }
+
+    async performAutoSave(initial = false) {
+        try {
+            this.showSaveToast('Saving...');
+            // write to localStorage
+            localStorage.setItem('ttou_save', this.exportState());
+            if (this.username) localStorage.setItem('ttou_username', this.username);
+            // small delay for UX to show saving state (shorter if initial)
+            await this.sleep(initial ? 300 : 700);
+            this.showSaveToast('Save Complete', 900);
+        } catch (e) {
+            // in case of error show failure message briefly
+            this.showSaveToast('Save Failed', 1200);
+            console.error('Autosave failed', e);
+        }
+    }
+
+    showSaveToast(text = 'Saving...', holdMs = 700) {
+        // create or reuse toast element
+        let toast = document.getElementById('ttou-save-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'ttou-save-toast';
+            toast.style.position = 'fixed';
+            toast.style.right = '18px';
+            toast.style.bottom = '18px';
+            toast.style.zIndex = 999999;
+            toast.style.pointerEvents = 'none';
+            document.body.appendChild(toast);
+        }
+        // set content and animate
+        toast.textContent = text;
+        toast.classList.remove('visible');
+        // force reflow to restart animation
+        void toast.offsetWidth;
+        toast.classList.add('visible');
+        // hide after holdMs + fade duration (CSS handles fade)
+        clearTimeout(toast._hideTimer);
+        toast._hideTimer = setTimeout(() => {
+            toast.classList.remove('visible');
+        }, holdMs + 700);
     }
 }
 
