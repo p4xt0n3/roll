@@ -18,13 +18,17 @@
                     <span class="currency-icon">💎</span>
                     <span class="currency-amount">∞</span>
                 </div>
+                <div class="currency-item">
+                    <span class="currency-icon">⭐</span>
+                    <span class="currency-amount" id="stellarCoinAmount">0</span>
+                </div>
             </div>
             
             <div class="roll-options">
                 <button class="roll-option active" data-type="1">
                     <div class="option-header">
                         <span class="option-title">Single Pull</span>
-                        <span class="option-cost">FREE</span>
+                        <span class="option-cost" id="singleCost">10 ⭐</span>
                     </div>
                     <div class="option-description">Roll once for a chance at rare items</div>
                 </button>
@@ -32,7 +36,7 @@
                 <button class="roll-option" data-type="10">
                     <div class="option-header">
                         <span class="option-title">10-Pull</span>
-                        <span class="option-cost">FREE</span>
+                        <span class="option-cost" id="tenCost">100 ⭐</span>
                     </div>
                     <div class="option-description">Roll 10 times with guaranteed 4★ or higher</div>
                 </button>
@@ -44,6 +48,11 @@
                 <button class="debug-btn" id="craftingBtn" title="Crafting">🛠️</button>
                 <button class="debug-btn" id="inventoryBtn" title="Inventory">E</button>
                 <button class="debug-btn" id="saveLoadBtn" title="Save / Load">S</button>
+                <button class="debug-btn" id="sellBtn" title="Sell Items">💰</button>
+            </div>
+            
+            <div class="gallery-section">
+                <button class="gallery-btn" id="galleryBtn">Gallery</button>
             </div>
         </div>
         
@@ -152,6 +161,15 @@
                     </div>
                     
                     <div class="rate-section">
+                        <h4>Money Value</h4>
+                        <div class="rate-group">
+                            <label>StellarCoin Amount:</label>
+                            <input type="number" id="moneyValue" step="1" min="0" value="100">
+                            <span>⭐</span>
+                        </div>
+                    </div>
+                    
+                    <div class="rate-section">
                         <h4>Character Rates</h4>
                         <div class="rate-group">
                             <label>Purple Characters (4★):</label>
@@ -172,6 +190,7 @@
                     
                     <div class="debug-actions">
                         <button class="debug-reset" id="resetRates">Reset to Original</button>
+                        <button class="debug-reset" id="dataReset">Data Reset</button>
                         <button class="debug-apply" id="applyRates">Apply Changes</button>
                     </div>
                 </div>
@@ -192,6 +211,45 @@
                         <button class="password-submit" id="musicYes" style="width:120px;">Yes</button>
                         <button class="debug-reset" id="musicNo" style="width:120px;">No</button>
                     </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Startup Import / Username Modal -->
+        <div class="password-modal" id="startupModal" style="display:flex;">
+            <div class="modal-overlay"></div>
+            <div class="modal-content" style="max-width:700px;">
+                <div class="modal-header">
+                    <h3>Welcome</h3>
+                </div>
+                <div class="modal-body" id="startupBody" style="gap:1rem;display:flex;flex-direction:column;">
+                    <div id="startupQuestion" style="text-align:center;">
+                        <p style="font-size:1.1rem;margin-bottom:1rem;">Do you have Save Code?</p>
+                        <div style="display:flex;gap:0.75rem;justify-content:center;">
+                            <button class="password-submit" id="startupYes" style="width:140px;">Yes</button>
+                            <button class="debug-reset" id="startupNo" style="width:140px;">No</button>
+                        </div>
+                    </div>
+                    <!-- import area -->
+                    <div id="startupImport" style="display:none;">
+                        <p style="color:var(--text-secondary);">Paste your Save Code below and click Import:</p>
+                        <textarea id="startupImportTextarea" rows="6" style="width:100%;background:var(--bg-tertiary);border:1px solid var(--border-primary);color:var(--text-primary);padding:0.75rem;border-radius:8px;"></textarea>
+                        <div style="display:flex;gap:0.5rem;justify-content:flex-end;">
+                            <button class="debug-reset" id="startupImportCancel">Cancel</button>
+                            <button class="password-submit" id="startupImportBtn">Import</button>
+                        </div>
+                        <div id="startupImportMsg" style="color:var(--text-secondary);min-height:1.2rem;margin-top:0.5rem;"></div>
+                    </div>
+                    <!-- username area -->
+                    <div id="startupUsername" style="display:none;">
+                        <p style="color:var(--text-secondary);">Enter your Username:</p>
+                        <input id="startupNameInput" placeholder="Username..." maxlength="24" style="width:100%;background:var(--bg-tertiary);border:1px solid var(--border-primary);border-radius:8px;padding:0.75rem;color:var(--text-primary);">
+                        <div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-top:0.5rem;">
+                            <button class="debug-reset" id="startupNameCancel">Cancel</button>
+                            <button class="password-submit" id="startupNameBtn">Continue</button>
+                        </div>
+                    </div>
+                    <div id="startupWelcome" style="display:none;text-align:center;font-weight:700;font-size:1.05rem;color:var(--text-primary);"></div>
                 </div>
             </div>
         </div>
@@ -288,6 +346,45 @@
                         <button class="password-submit" id="importFromTextarea" style="flex:1">Import / Load</button>
                     </div>
                     <div id="saveLoadMsg" style="margin-top:0.75rem;color:var(--text-secondary);min-height:1.2rem;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Gallery Modal -->
+        <div class="gallery-modal" id="galleryModal">
+            <div class="modal-overlay"></div>
+            <div class="gallery-content">
+                <div class="gallery-header">
+                    <h2>Character Gallery</h2>
+                    <button class="modal-close" id="closeGalleryModal">&times;</button>
+                </div>
+                <div class="gallery-grid" id="galleryGrid">
+                    <!-- Characters will be populated here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sell Modal -->
+        <div class="password-modal" id="sellModal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content sell-content">
+                <div class="modal-header">
+                    <h3>Sell Items</h3>
+                    <button class="modal-close" id="closeSellModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="sell-container">
+                        <div class="sell-section">
+                            <h4>Inventory Items</h4>
+                            <div class="sell-items-list" id="sellInventoryList"></div>
+                        </div>
+                        <div class="sell-section">
+                            <h4>Items to Sell</h4>
+                            <div class="sell-items-list" id="sellSelectedList"></div>
+                            <div class="sell-total" id="sellTotal">Total: 0 ⭐</div>
+                            <button class="password-submit" id="executeSell" disabled>Sell Items</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

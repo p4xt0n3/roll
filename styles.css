@@ -683,6 +683,95 @@ body {
     width: 20px;
 }
 
+.sell-content {
+    max-width: 800px;
+    width: 95%;
+}
+
+.sell-container {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.sell-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.sell-section h4 {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.sell-items-list {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    min-height: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.sell-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    margin-bottom: 0.25rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sell-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--accent-primary);
+}
+
+.sell-item.rarity-blue .sell-item-name { color: #4a90ff; }
+.sell-item.rarity-purple .sell-item-name { color: #a855f7; }
+.sell-item.rarity-gold .sell-item-name { color: #f59e0b; }
+.sell-item.rarity-red .sell-item-name { color: #ef4444; }
+
+.sell-item-name {
+    font-weight: 600;
+    flex: 1;
+    margin-right: 0.5rem;
+}
+
+.sell-item-count {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    margin-right: 0.5rem;
+}
+
+.sell-item-price {
+    color: var(--accent-primary);
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.sell-total {
+    text-align: center;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--accent-primary);
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: rgba(0, 212, 255, 0.1);
+    border-radius: 8px;
+}
+
 .debug-actions {
     display: flex;
     gap: 1rem;
@@ -846,6 +935,241 @@ body {
 /* Tiny visual tweak for command input when focused */
 #cmdInput:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 4px 14px rgba(0,212,255,0.06); }
 
+.gallery-section {
+    margin-top: 1rem;
+}
+
+.gallery-btn {
+    width: 100%;
+    background: var(--gradient-bg);
+    border: 1px solid var(--border-primary);
+    color: var(--text-primary);
+    padding: 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.gallery-btn:hover {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+}
+
+.gallery-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.gallery-modal.show {
+    opacity: 1;
+}
+
+.gallery-content {
+    position: relative;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 20px;
+    width: 95%;
+    max-width: 1200px;
+    max-height: 90vh;
+    z-index: 2001;
+    display: flex;
+    flex-direction: column;
+}
+
+.gallery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.gallery-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+    overflow-y: auto;
+    max-height: calc(90vh - 120px);
+}
+
+.gallery-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.gallery-grid::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+}
+
+.gallery-grid::-webkit-scrollbar-thumb {
+    background: var(--accent-primary);
+    border-radius: 4px;
+}
+
+.gallery-character {
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-primary);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.gallery-character:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.gallery-character.locked {
+    background: linear-gradient(135deg, #220000, #330000);
+    border-color: #660000;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+.gallery-character.locked::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 5px,
+        rgba(255, 0, 0, 0.1) 5px,
+        rgba(255, 0, 0, 0.1) 10px
+    );
+    pointer-events: none;
+    z-index: 1;
+}
+
+.gallery-character.locked::after {
+    content: '🔒';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    z-index: 2;
+    color: #ff4444;
+    text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+}
+
+.character-portrait {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.gallery-character.locked .character-portrait {
+    background: linear-gradient(135deg, #440000, #220000);
+    color: #666;
+    filter: blur(3px);
+}
+
+.character-name {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.gallery-character.locked .character-name {
+    color: #666;
+    text-shadow: none;
+}
+
+.character-rarity {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.gallery-character.locked .character-rarity {
+    color: #444;
+}
+
+.gallery-character.rarity-purple .character-name {
+    color: #a855f7;
+}
+
+.gallery-character.rarity-purple .character-portrait {
+    background: linear-gradient(135deg, #a855f7, #c084fc);
+}
+
+.gallery-character.rarity-gold .character-name {
+    color: #f59e0b;
+}
+
+.gallery-character.rarity-gold .character-portrait {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+}
+
+.gallery-character.rarity-red .character-name {
+    color: #ef4444;
+}
+
+.gallery-character.rarity-red .character-portrait {
+    background: linear-gradient(135deg, #ef4444, #f87171);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+
+.chains-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M10,10 L90,90 M90,10 L10,90" stroke="%23444" stroke-width="3" opacity="0.7"/></svg>');
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.gallery-character.locked .chains-overlay {
+    display: block;
+}
+
+.gallery-character:not(.locked) .chains-overlay {
+    display: none;
+}
+
 /* Responsive design */
 @media (max-width: 1024px) {
     .app-container {
@@ -886,4 +1210,10 @@ body {
     }
     
     .password-modal .modal-content { max-width: 92%; }
+}
+
+@media (max-width: 768px) {
+    .sell-container {
+        flex-direction: column;
+    }
 }

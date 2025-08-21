@@ -53,6 +53,9 @@ class GachaSystem {
     constructor() {
         this.currentRollType = 1;
         this.isRolling = false;
+        this.stellarCoin = 100; // start with 100 StellarCoin by default
+        this.sellQueue = {}; // items to sell: { itemName: count }
+        this.username = ''; // new: username persisted via localStorage
         
         // Inventories
         this.characterInventory = []; // stores character names
@@ -76,6 +79,8 @@ class GachaSystem {
         
         this.setupEventListeners();
         this.setupDebugSystem();
+        // show startup import/name modal on launch
+        setTimeout(()=> this.initStartupFlow(), 100);
     }
     
     setupEventListeners() {
@@ -94,6 +99,15 @@ class GachaSystem {
         // Clear results
         document.getElementById('clearResults').addEventListener('click', () => {
             this.clearResults();
+        });
+
+        // Gallery button
+        document.getElementById('galleryBtn').addEventListener('click', () => {
+            this.showGallery();
+        });
+        
+        document.getElementById('closeGalleryModal').addEventListener('click', () => {
+            this.hideGallery();
         });
 
         // Save/Load UI
@@ -124,6 +138,26 @@ class GachaSystem {
                 const recipe = e.target.closest('.craft-item').dataset.recipe;
                 this.attemptCraft(recipe);
             });
+        });
+        
+        // Sell button
+        document.getElementById('sellBtn').addEventListener('click', () => {
+            this.showSellModal();
+        });
+        
+        document.getElementById('closeSellModal').addEventListener('click', () => {
+            document.getElementById('sellModal').style.display = 'none';
+        });
+        
+        document.getElementById('executeSell').addEventListener('click', () => {
+            this.executeSell();
+        });
+        
+        // Close on overlay click
+        document.getElementById('sellModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('sellModal')) {
+                document.getElementById('sellModal').style.display = 'none';
+            }
         });
     }
     
@@ -227,6 +261,27 @@ class GachaSystem {
         resetRates.addEventListener('click', () => {
             this.currentRates = { ...this.originalRates };
             this.updateDebugInputs();
+            // reset money value to default starting amount
+            const mv = document.getElementById('moneyValue');
+            if (mv) mv.value = 100;
+            this.stellarCoin = 100;
+            this.updateStellarCoinDisplay();
+        });
+        
+        // Data Reset - clear everything (confirm then wipe storage and reload)
+        const dataResetBtn = document.getElementById('dataReset');
+        dataResetBtn.addEventListener('click', () => {
+            if (!confirm('DATA RESET: This will erase ALL progress, username, inventory, and debug unlock for this browser. Continue?')) return;
+            // Clear known keys used by the app
+            try {
+                localStorage.removeItem('ttou_save');
+                localStorage.removeItem('ttou_username');
+                sessionStorage.removeItem(DEBUG_UNLOCK_KEY);
+            } catch (e) {}
+            // Optionally clear other app keys if present
+            try { localStorage.removeItem('ttou_last_autosave'); } catch(e){}
+            // Force a full reload to ensure a clean state
+            location.reload();
         });
         
         // Apply rates
@@ -332,6 +387,9 @@ class GachaSystem {
         document.getElementById('purpleCharRate').value = this.currentRates.purpleChar;
         document.getElementById('goldCharRate').value = this.currentRates.goldChar;
         document.getElementById('redCharRate').value = this.currentRates.redChar;
+        // show current StellarCoin in debug panel
+        const mv = document.getElementById('moneyValue');
+        if (mv) mv.value = this.stellarCoin;
     }
     
     applyDebugRates() {
@@ -345,6 +403,15 @@ class GachaSystem {
             goldChar: parseFloat(document.getElementById('goldCharRate').value) || 0,
             redChar: parseFloat(document.getElementById('redCharRate').value) || 0
         };
+        // apply StellarCoin change if provided
+        const mv = document.getElementById('moneyValue');
+        if (mv) {
+            const val = parseInt(mv.value, 10);
+            if (!Number.isNaN(val)) {
+                this.stellarCoin = Math.max(0, val);
+                this.updateStellarCoinDisplay();
+            }
+        }
     }
     
     selectRollType(type) {
@@ -449,9 +516,19 @@ class GachaSystem {
     async executeRoll() {
         if (this.isRolling) return;
         
+        const cost = this.currentRollType === 1 ? 10 : 100;
+        if (this.stellarCoin < cost) {
+            alert(`Not enough StellarCoin! You need ${cost} ⭐ but have ${this.stellarCoin} ⭐`);
+            return;
+        }
+        
         this.isRolling = true;
         const rollBtn = document.getElementById('executeRoll');
         rollBtn.disabled = true;
+        
+        // Deduct cost
+        this.stellarCoin -= cost;
+        this.updateStellarCoinDisplay();
         
         const results = this.roll(this.currentRollType);
         await this.playAnimation(results);
@@ -760,9 +837,11 @@ class GachaSystem {
     // Serialize current progress to JSON string
     exportState() {
         const state = {
+            username: this.username || '',
             characterInventory: this.characterInventory.slice(),
             itemInventory: JSON.parse(JSON.stringify(this.itemInventory)),
             currentRates: { ...this.currentRates },
+            stellarCoin: this.stellarCoin,
             // include results grid items (names + rarity + stars + type) so UI can be reconstructed
             results: Array.from(document.getElementById('resultsGrid').children).map(card => {
                 return {
@@ -786,11 +865,18 @@ class GachaSystem {
                 throw new Error('Invalid JSON');
             }
         }
+        // set username if present
+        if (state.username) {
+            this.username = state.username;
+            localStorage.setItem('ttou_username', this.username);
+        }
         // Basic validation and assignment
         if (state.characterInventory && state.itemInventory) {
             this.characterInventory = Array.isArray(state.characterInventory) ? state.characterInventory.slice() : [];
             this.itemInventory = typeof state.itemInventory === 'object' ? JSON.parse(JSON.stringify(state.itemInventory)) : {};
             if (state.currentRates) this.currentRates = { ...this.currentRates, ...state.currentRates };
+            this.stellarCoin = state.stellarCoin || 0;
+            this.updateStellarCoinDisplay();
             // rebuild results grid
             const resultsGrid = document.getElementById('resultsGrid');
             resultsGrid.innerHTML = '';
@@ -876,13 +962,17 @@ class GachaSystem {
                 // give every item once and all characters once
                 Object.values(gameData.items).flat().forEach(name => this.incItem(name, 1, this.inferRarityFromList(name)));
                 Object.values(gameData.characters).flat().forEach(name => this.characterInventory.push(name));
-                this.appendCmdLine('All items and characters have been added to inventory.');
+                this.stellarCoin += 10000; // Give some StellarCoin too
+                this.updateStellarCoinDisplay();
+                this.appendCmdLine('All items, characters, and 10000 StellarCoin have been added.');
                 this.updateCraftListCounts();
                 break;
             case '/clearall':
                 this.characterInventory = [];
                 this.itemInventory = {};
-                this.appendCmdLine('Inventory cleared.');
+                this.stellarCoin = 0;
+                this.updateStellarCoinDisplay();
+                this.appendCmdLine('Inventory and StellarCoin cleared.');
                 break;
             case '/reload':
                 this.appendCmdLine('Reloading page...');
@@ -1172,7 +1262,7 @@ class GachaSystem {
         };
         (async () => {
             await showThenSwap('nahidwin.jpg', 2000);
-            await showThenSwap('gojover.jpg', 2000);
+            await showThenSwap('gojoat.jpg', 2000);
             wrap.remove();
         })();
     }
@@ -1235,6 +1325,264 @@ class GachaSystem {
         requestAnimationFrame(()=> { left.style.transition='opacity .25s'; right.style.transition='opacity .25s'; left.style.opacity='1'; right.style.opacity='1';});
         setTimeout(()=>{ left.style.opacity='0'; right.style.opacity='0'; setTimeout(()=>wrap.remove(),400); }, 2500);
     }
+
+    showGallery() {
+        const modal = document.getElementById('galleryModal');
+        const grid = document.getElementById('galleryGrid');
+        
+        // Clear existing content
+        grid.innerHTML = '';
+        
+        // Get all characters from game data
+        const allCharacters = [
+            ...gameData.characters.purple.map(name => ({ name, rarity: 'purple', stars: 4 })),
+            ...gameData.characters.gold.map(name => ({ name, rarity: 'gold', stars: 5 })),
+            ...gameData.characters.red.map(name => ({ name, rarity: 'red', stars: 6 }))
+        ];
+        
+        // Create character cards
+        allCharacters.forEach(character => {
+            const isUnlocked = this.characterInventory.includes(character.name);
+            const card = this.createGalleryCharacterCard(character, isUnlocked);
+            grid.appendChild(card);
+        });
+        
+        // Show modal with fade in effect
+        modal.style.display = 'flex';
+        requestAnimationFrame(() => {
+            modal.classList.add('show');
+        });
+        
+        // Close on overlay click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                this.hideGallery();
+            }
+        });
+    }
+    
+    hideGallery() {
+        const modal = document.getElementById('galleryModal');
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 400);
+    }
+    
+    createGalleryCharacterCard(character, isUnlocked) {
+        const card = document.createElement('div');
+        card.className = `gallery-character ${isUnlocked ? `rarity-${character.rarity}` : 'locked'}`;
+        
+        const portrait = document.createElement('div');
+        portrait.className = 'character-portrait';
+        portrait.textContent = isUnlocked ? character.name.charAt(0).toUpperCase() : '?';
+        
+        const name = document.createElement('div');
+        name.className = 'character-name';
+        name.textContent = isUnlocked ? character.name : '???';
+        
+        const rarity = document.createElement('div');
+        rarity.className = 'character-rarity';
+        rarity.textContent = isUnlocked ? '★'.repeat(character.stars) : '???';
+        
+        const chains = document.createElement('div');
+        chains.className = 'chains-overlay';
+        
+        card.appendChild(portrait);
+        card.appendChild(name);
+        card.appendChild(rarity);
+        card.appendChild(chains);
+        
+        return card;
+    }
+    
+    showSellModal() {
+        document.getElementById('sellModal').style.display = 'flex';
+        this.sellQueue = {};
+        this.updateSellLists();
+    }
+    
+    updateSellLists() {
+        const inventoryList = document.getElementById('sellInventoryList');
+        const selectedList = document.getElementById('sellSelectedList');
+        
+        // Clear lists
+        inventoryList.innerHTML = '';
+        selectedList.innerHTML = '';
+        
+        // Populate inventory list (excluding items in sell queue)
+        Object.entries(this.itemInventory).forEach(([itemName, data]) => {
+            const availableCount = data.count - (this.sellQueue[itemName] || 0);
+            if (availableCount > 0) {
+                const item = this.createSellItem(itemName, availableCount, data.rarity, 'inventory');
+                inventoryList.appendChild(item);
+            }
+        });
+        
+        // Populate selected list
+        Object.entries(this.sellQueue).forEach(([itemName, count]) => {
+            if (count > 0) {
+                const rarity = this.getItemRarity(itemName);
+                const item = this.createSellItem(itemName, count, rarity, 'selected');
+                selectedList.appendChild(item);
+            }
+        });
+        
+        this.updateSellTotal();
+    }
+    
+    createSellItem(itemName, count, rarity, listType) {
+        const item = document.createElement('div');
+        item.className = `sell-item rarity-${rarity}`;
+        
+        const price = this.getItemPrice(rarity);
+        const totalPrice = price * count;
+        
+        item.innerHTML = `
+            <div class="sell-item-name">${itemName}</div>
+            <div class="sell-item-count">${count}×</div>
+            <div class="sell-item-price">${totalPrice} ⭐</div>
+        `;
+        
+        item.addEventListener('click', () => {
+            if (listType === 'inventory') {
+                // Move to sell queue
+                this.sellQueue[itemName] = (this.sellQueue[itemName] || 0) + 1;
+            } else {
+                // Remove from sell queue
+                if (this.sellQueue[itemName] > 1) {
+                    this.sellQueue[itemName]--;
+                } else {
+                    delete this.sellQueue[itemName];
+                }
+            }
+            this.updateSellLists();
+        });
+        
+        return item;
+    }
+    
+    getItemPrice(rarity) {
+        const prices = {
+            blue: 10,
+            purple: 50,
+            gold: 150,
+            red: 500,
+            black: 1000 // Special price for black items
+        };
+        return prices[rarity] || 10;
+    }
+    
+    updateSellTotal() {
+        let total = 0;
+        Object.entries(this.sellQueue).forEach(([itemName, count]) => {
+            const rarity = this.getItemRarity(itemName);
+            const price = this.getItemPrice(rarity);
+            total += price * count;
+        });
+        
+        document.getElementById('sellTotal').textContent = `Total: ${total} ⭐`;
+        document.getElementById('executeSell').disabled = total === 0;
+    }
+    
+    executeSell() {
+        let totalEarned = 0;
+        
+        // Process each item in sell queue
+        Object.entries(this.sellQueue).forEach(([itemName, count]) => {
+            const rarity = this.getItemRarity(itemName);
+            const price = this.getItemPrice(rarity);
+            const earned = price * count;
+            
+            // Remove items from inventory
+            this.decItem(itemName, count);
+            totalEarned += earned;
+        });
+        
+        // Add StellarCoin
+        this.stellarCoin += totalEarned;
+        this.updateStellarCoinDisplay();
+        
+        // Clear sell queue
+        this.sellQueue = {};
+        
+        // Update UI
+        this.updateSellLists();
+        
+        // Show success message
+        alert(`Sold items for ${totalEarned} StellarCoin! You now have ${this.stellarCoin} ⭐`);
+        
+        // Update inventory if open
+        if (document.getElementById('inventoryModal').style.display === 'flex') {
+            this.showInventory('items');
+        }
+        
+        // Update crafting counts if open
+        this.updateCraftListCounts();
+    }
+    
+    updateStellarCoinDisplay() {
+        document.getElementById('stellarCoinAmount').textContent = this.stellarCoin;
+        // show username somewhere (if present)
+        if (this.username) {
+            const logo = document.querySelector('.logo');
+            if (logo && !document.getElementById('userBadge')) {
+                const b = document.createElement('div'); b.id='userBadge'; b.style.marginTop='0.5rem'; b.style.color='var(--text-secondary)'; b.textContent = `User: ${this.username}`; logo.appendChild(b);
+            } else if (logo && document.getElementById('userBadge')) {
+                document.getElementById('userBadge').textContent = `User: ${this.username}`;
+            }
+        }
+    }
+
+    // New: startup modal logic
+    initStartupFlow() {
+        const modal = document.getElementById('startupModal');
+        const q = document.getElementById('startupQuestion');
+        const imp = document.getElementById('startupImport');
+        const uni = document.getElementById('startupUsername');
+        const welcome = document.getElementById('startupWelcome');
+        const nameInput = document.getElementById('startupNameInput');
+        const importTextarea = document.getElementById('startupImportTextarea');
+
+        // if username saved in localStorage and a saved game exists, attempt auto-load and skip prompt
+        const saved = localStorage.getItem('ttou_save');
+        const savedName = localStorage.getItem('ttou_username');
+        if (saved && savedName) {
+            try { this.loadState(saved); this.username = savedName; this.updateStellarCoinDisplay(); modal.style.display='none'; return; } catch(e){}
+        }
+
+        // handlers
+        document.getElementById('startupYes').addEventListener('click', () => { q.style.display='none'; imp.style.display='block'; });
+        document.getElementById('startupNo').addEventListener('click', () => { q.style.display='none'; uni.style.display='block'; nameInput.focus(); });
+        document.getElementById('startupImportCancel').addEventListener('click', ()=> { imp.style.display='none'; q.style.display='block'; });
+        document.getElementById('startupNameCancel').addEventListener('click', ()=> { uni.style.display='none'; q.style.display='block'; });
+
+        document.getElementById('startupImportBtn').addEventListener('click', ()=> {
+            const txt = importTextarea.value.trim();
+            if (!txt) { document.getElementById('startupImportMsg').textContent='Please paste a save code.'; return; }
+            try {
+                this.loadState(txt);
+                // persist to localStorage
+                localStorage.setItem('ttou_save', this.exportState());
+                if (this.username) localStorage.setItem('ttou_username', this.username);
+                document.getElementById('startupImportMsg').textContent='Import successful! Entering...';
+                setTimeout(()=> { modal.style.display='none'; this.updateStellarCoinDisplay(); }, 700);
+            } catch (e) {
+                document.getElementById('startupImportMsg').textContent='Invalid save code.';
+            }
+        });
+
+        document.getElementById('startupNameBtn').addEventListener('click', ()=> {
+            const v = nameInput.value.trim();
+            if (!v) { nameInput.focus(); return; }
+            this.username = v;
+            localStorage.setItem('ttou_username', v);
+            welcome.textContent = `Welcome to TTOU Gacha Simulator, ${v}`;
+            uni.style.display='none';
+            welcome.style.display='block';
+            setTimeout(()=> { modal.style.display='none'; this.updateStellarCoinDisplay(); }, 900);
+        });
+    }
 }
 
 // Animation keyframes for shake effects
@@ -1283,5 +1631,6 @@ document.head.appendChild(style);
 
 // Initialize the gacha system
 document.addEventListener('DOMContentLoaded', () => {
-    new GachaSystem();
+    const gacha = new GachaSystem();
+    gacha.updateStellarCoinDisplay();
 });
