@@ -34,6 +34,41 @@ body {
     min-height: 100vh;
 }
 
+/* Right sidebar styles */
+.rightbar {
+    width: 220px;
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border-primary);
+    padding: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    position: relative;
+    z-index: 5;
+}
+.rightbar-inner {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+}
+.right-btn {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid var(--border-primary);
+    background: var(--gradient-bg);
+    color: var(--text-primary);
+    transition: all 0.18s ease;
+}
+.right-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-primary);
+}
+
 .sidebar {
     width: 320px;
     background: var(--gradient-bg);
@@ -1204,6 +1239,106 @@ body {
     pointer-events: none;
 }
 
+.gallery-item {
+    position: relative;
+}
+
+/* locked creepy variant */
+.gallery-item.god-locked {
+    background: linear-gradient(135deg,#020203,#0b0b0d);
+    border-color: #050505;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.8), inset 0 0 80px rgba(0,0,0,0.6);
+    color: #bbb;
+}
+
+/* portrait for god card */
+.god-portrait {
+    width: 88px;
+    height: 88px;
+    border-radius: 12px;
+    margin: 0 auto 1rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.25rem;
+    font-weight:900;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.02), transparent 20%), linear-gradient(135deg,#111,#050505);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 40px rgba(0,0,0,0.8) inset;
+    overflow: hidden;
+}
+
+/* add an eerie spreading aura for the locked god card */
+.gallery-item.god-locked::before {
+    content: '';
+    position: absolute;
+    inset: -30%;
+    z-index: 0;
+    background: radial-gradient(closest-side, rgba(0,0,0,0.85) 10%, rgba(10,6,12,0.7) 40%, rgba(40,0,20,0.35) 60%, transparent 70%);
+    filter: blur(18px) saturate(0.6);
+    pointer-events: none;
+}
+
+/* override chains-overlay to show gif/icon instead of lock icon */
+.gallery-item.god-locked .chains-overlay {
+    display: block;
+    background: url('godisloveyou.png') center/48px 48px no-repeat, repeating-linear-gradient(
+        45deg,
+        rgba(0,0,0,0.0),
+        rgba(0,0,0,0.0) 6px,
+        rgba(255,0,0,0.02) 6px,
+        rgba(255,0,0,0.02) 12px
+    );
+    opacity: 0.95;
+}
+
+/* locked card name hidden; show nothing */
+.gallery-item.god-locked .character-name { color: transparent; text-shadow: none; }
+
+/* unlocked state shows shaking text instead of stars */
+.gallery-item.rarity-black .god-name {
+    font-weight: 900;
+    font-size: 1rem;
+    color: #fff;
+    animation: godShakeFast 0.12s ease-in-out infinite;
+    letter-spacing: 0.06em;
+    text-align:center;
+}
+
+/* remove star display / style rarity to be dramatic */
+.gallery-item.rarity-black .character-rarity {
+    font-weight: 900;
+    font-size: 0.95rem;
+    color: #fff;
+    text-shadow: 0 6px 18px rgba(255,255,255,0.03);
+}
+
+/* shake animation for unlocked label */
+@keyframes godShakeFast {
+    0% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-1px) rotate(-0.7deg); }
+    50% { transform: translateY(0) rotate(0.4deg); }
+    75% { transform: translateY(-1px) rotate(-0.5deg); }
+    100% { transform: translateY(0) rotate(0deg); }
+}
+
+/* small tooltip for clicking locked god card */
+.god-locked-tip {
+    position: fixed;
+    left: 50%;
+    top: 18%;
+    transform: translateX(-50%) translateY(-10px);
+    background: rgba(0,0,0,0.85);
+    color: #fff;
+    padding: 0.6rem 0.9rem;
+    border-radius: 8px;
+    font-weight:700;
+    z-index: 999999;
+    opacity:0;
+    transition: all 0.25s ease;
+    pointer-events:none;
+}
+.god-locked-tip.show { opacity:1; transform: translateX(-50%) translateY(0); }
+
 /* Responsive design */
 @media (max-width: 1024px) {
     .app-container {
@@ -1226,6 +1361,13 @@ body {
     .results-grid {
         grid-template-columns: 1fr;
         max-height: 50vh;
+    }
+    
+    .rightbar {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--border-primary);
+        padding: 1rem;
     }
 }
 

@@ -23,12 +23,22 @@ const gameData = {
             "Scepter of Reality's End", "Chaosforged Armor", "Eye of the Void Serpent", "Worldshaper Hammer",
             "Sacred Chalice of Aeons", "Book of All Origins", "Timeweaver's Hourglass", "Ring of the Endless Dream",
             "Basebat of 333", "Hypersonic Multitool", "Scepter of Hope & Love", "Armside Supersonic Blade",
-            "Silence", "The Devourer of Souls", "The SoulShatter", "Joker Masker", "Holgyht Orb", "Voidus Twinblade"
+            "Silence", "The Devourer of Souls", "The SoulShatter", "Joker Masker", "Holgyht Orb", "Voidus Twinblade",
+            // NEW Gold-tier items requested:
+            "Gojo's Blindfold", "Wheel of Dharma", "Sword Piece of Umbra", "Mysterious Hi-Tech Mask",
+            "Piece of Bone...?", "Rokakaka Fruit", "Hamon Manual", "Spin Manual", "Fragment of Tyranny",
+            "Eye of Ender", "Golden Apple", "Ribcage of Saint Corpse Part", "Arm of the Saint Corpse Part",
+            "Heart of the Saint Corpse Part", "Pelvis of the Saint Corpse Part", "Skull of the Saint Corpse Part",
+            "Leg of the Saint Corpse Part", "Eye of the Saint Corpse Part"
         ],
         red: [
             "The Card", "Rubix of 6th Stage Seal", "The All-See Eye of 333", "Requiem Arrow", "The Perfect DNA",
             "The Manual of ⭕💴", "Level V Authority Keycard (G Foundation)", "True Devourer of All Souls",
-            "Miyabi's Sealed Katana"
+            "Miyabi's Sealed Katana",
+            // NEW Red-tier items requested:
+            "Sukuna's Finger", "Six Eyes", "The Bones of 87", "New Rokakaka Fruit", "Umbra",
+            "Original Blacksite", "Calamity's Flow in a Bottle", "The Whole Corpse of the Saint",
+            "The Bible", "The Tale of The Old Universe"
         ],
         black: [
             "GOD IS LOVE YOU"
@@ -39,12 +49,23 @@ const gameData = {
             "Dak", "M", "Rewd", "Saskon", "Echer", "Bescre", "Zes", "Trons", "Frost", "LinYuan"
         ],
         gold: [
-            "G", "Paxton", "Nathan", "Karos", "Kames", "Litem", "『The Lover』", "The Old Duke", "Kasi", "Lauris RaruzY"
+            "G", "Paxton", "Nathan", "Karos", "Kames", "Litem", "『The Lover』", "The Old Duke", "Kasi", "Lauris RaruzY",
+            // NEW Gold characters requested:
+            "Kamustrophy Subforce", "Veroy Subforce", "Casual Subforce", "G-033 Subforce", "G-Adv Subforce",
+            "Rister", "Shadow", "QingXuan", "Chiya Harano", "Trasy", "Joseph", "Cirys", "Deep Abyss",
+            "Reinforced", "Wood", "The Mysterio", "Hyper", "Misma", "Collision"
         ],
         red: [
             "The Perfect Alternate, G", "Elemental Unleashed, Paxton", "The Red Dust Prodigy, Nathan",
             "Cuber Requiem, Kasi", "The Emperor Awakes, Karos", "Assassin Back on Job, The Old Duke",
-            "The True Speach 100% Unsealed, Lauris RaruzY"
+            "The True Speach 100% Unsealed, Lauris RaruzY",
+            // NEW Red characters requested:
+            "Cosmical Rubix 100% Awaken, Rister", "The Assassin in Darkness, Shadow",
+            "Spiritual Devastation, QingXuan", "Fallen Cherry Blossoms, Chiya Harano",
+            "The Hope & Love, Trasy", "The Greatest Joker, Joseph", "Holyght Released, Cirys",
+            "Unseen Lethal Danger, Deep Abyss", "The Invincible Defence, Reinforced",
+            "Cosmical Colossal Woodcrawler, Wood", "The First Alternate, The Mysterio",
+            "The Deep Horror Within, Hyper", "The Last Planner, Misma", "Know Everything Exist, Collision"
         ]
     }
 };
@@ -56,6 +77,9 @@ class GachaSystem {
         this.stellarCoin = 100; // start with 100 StellarCoin by default
         this.sellQueue = {}; // items to sell: { itemName: count }
         this.username = ''; // new: username persisted via localStorage
+        
+        this.easyMode = false; // NEW: Easy Mode default OFF
+        this.autoClear = true; // NEW: Auto Clear default ON
         
         // Inventories
         this.characterInventory = []; // stores character names
@@ -94,6 +118,17 @@ class GachaSystem {
             });
         });
         
+        // Auto Clear toggle in right bar
+        const autoBtn = document.getElementById('autoClearBtn');
+        if (autoBtn) {
+            autoBtn.textContent = `Auto Clear: ${this.autoClear ? 'On' : 'Off'}`;
+            autoBtn.addEventListener('click', () => {
+                this.autoClear = !this.autoClear;
+                autoBtn.textContent = `Auto Clear: ${this.autoClear ? 'On' : 'Off'}`;
+                autoBtn.style.background = this.autoClear ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.03)';
+            });
+        }
+        
         // Execute roll
         document.getElementById('executeRoll').addEventListener('click', () => {
             this.executeRoll();
@@ -108,6 +143,19 @@ class GachaSystem {
         document.getElementById('galleryBtn').addEventListener('click', () => {
             this.showGallery();
         });
+        
+        // Easy Mode toggle
+        const easyBtn = document.getElementById('easyModeBtn');
+        if (easyBtn) {
+            easyBtn.addEventListener('click', () => {
+                this.easyMode = !this.easyMode;
+                easyBtn.textContent = `Easy Mode: ${this.easyMode ? 'On' : 'Off'}`;
+                // update display immediately
+                this.updateStellarCoinDisplay();
+                // subtle visual cue
+                easyBtn.style.background = this.easyMode ? 'rgba(34,197,94,0.12)' : 'rgba(255,255,255,0.03)';
+            });
+        }
         
         document.getElementById('closeGalleryModal').addEventListener('click', () => {
             this.hideGallery();
@@ -156,6 +204,11 @@ class GachaSystem {
             this.executeSell();
         });
 
+        // Add All to sell queue button
+        document.getElementById('addAllSell').addEventListener('click', () => {
+            this.addAllToSellQueue();
+        });
+
         // Save Progress button (immediately trigger a manual save)
         const spBtn = document.getElementById('saveProgressBtn');
         if (spBtn) {
@@ -171,7 +224,74 @@ class GachaSystem {
                 }
             });
         }
-        
+
+        // Video modal button
+        const videoBtn = document.getElementById('videoBtn');
+        if (videoBtn) {
+            videoBtn.addEventListener('click', () => {
+                document.getElementById('videoModal').style.display = 'flex';
+                // reset fields when opened
+                document.getElementById('videoUrlInput').value = '';
+                this.clearVideoScan();
+            });
+        }
+        document.getElementById('closeVideoModal').addEventListener('click', ()=> document.getElementById('videoModal').style.display='none');
+        document.getElementById('videoClearBtn').addEventListener('click', ()=> { document.getElementById('videoUrlInput').value=''; this.clearVideoScan(); });
+
+        document.getElementById('videoInitBtn').addEventListener('click', async () => {
+            const url = document.getElementById('videoUrlInput').value.trim();
+            if (!url) { this.showVideoError('Please paste a YouTube link.'); return; }
+            const id = this.parseYouTubeId(url);
+            if (!id) { this.showVideoError('Invalid YouTube URL.'); return; }
+            // attempt to fetch oEmbed to get title/author
+            try {
+                const oembedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${encodeURIComponent(id)}&format=json`;
+                const resp = await fetch(oembedUrl);
+                if (!resp.ok) throw new Error('oEmbed failed');
+                const data = await resp.json();
+                // populate UI
+                document.getElementById('videoTitle').textContent = data.title || ('YouTube Video ' + id);
+                document.getElementById('videoAuthor').textContent = data.author_name ? `By ${data.author_name}` : '';
+                const thumb = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+                const img = document.getElementById('videoThumb');
+                img.src = thumb;
+                img.style.display = '';
+                // enable download buttons
+                document.getElementById('downloadMp4Btn').disabled = false;
+                document.getElementById('downloadMp3Btn').disabled = false;
+                document.getElementById('videoError').style.display = 'none';
+                // store ID for later
+                this._videoDownloadId = id;
+            } catch (e) {
+                // fallback: still enable but show title from ID and smaller thumb
+                document.getElementById('videoTitle').textContent = 'YouTube Video';
+                document.getElementById('videoAuthor').textContent = '';
+                const idThumb = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+                const img = document.getElementById('videoThumb');
+                img.src = idThumb;
+                img.style.display = '';
+                document.getElementById('downloadMp4Btn').disabled = false;
+                document.getElementById('downloadMp3Btn').disabled = false;
+                this._videoDownloadId = id;
+                document.getElementById('videoError').style.display = 'none';
+            }
+        });
+
+        // Download actions open external downloader pages in new tabs (best-effort)
+        document.getElementById('downloadMp4Btn').addEventListener('click', () => {
+            if (!this._videoDownloadId) { this.showVideoError('Initialize first'); return; }
+            // Use a popular public downloader page with the URL parameter - opens in new tab for user to follow through
+            const videoUrl = `https://www.youtube.com/watch?v=${this._videoDownloadId}`;
+            // prefer y2mate (user will be taken to page where they can pick quality). This is an external site; the app only opens it.
+            const target = `https://www.y2mate.com/youtube/${encodeURIComponent(this._videoDownloadId)}`;
+            window.open(target, '_blank', 'noopener');
+        });
+        document.getElementById('downloadMp3Btn').addEventListener('click', () => {
+            if (!this._videoDownloadId) { this.showVideoError('Initialize first'); return; }
+            const target = `https://www.y2mate.com/youtube/${encodeURIComponent(this._videoDownloadId)}?format=mp3`;
+            window.open(target, '_blank', 'noopener');
+        });
+
         // Close on overlay click
         document.getElementById('sellModal').addEventListener('click', (e) => {
             if (e.target === document.getElementById('sellModal')) {
@@ -536,7 +656,7 @@ class GachaSystem {
         if (this.isRolling) return;
         
         const cost = this.currentRollType === 1 ? 10 : 100;
-        if (this.stellarCoin < cost) {
+        if (!this.easyMode && this.stellarCoin < cost) {
             alert(`Not enough StellarCoin! You need ${cost} ⭐ but have ${this.stellarCoin} ⭐`);
             return;
         }
@@ -545,9 +665,17 @@ class GachaSystem {
         const rollBtn = document.getElementById('executeRoll');
         rollBtn.disabled = true;
         
-        // Deduct cost
-        this.stellarCoin -= cost;
-        this.updateStellarCoinDisplay();
+        // Deduct cost (skip deduction in Easy Mode)
+        if (!this.easyMode) {
+            this.stellarCoin -= cost;
+            this.updateStellarCoinDisplay();
+        } else {
+            // ensure display remains infinite while easy mode active
+            this.updateStellarCoinDisplay();
+        }
+        
+        // Auto-clear previous results if enabled
+        if (this.autoClear) this.clearResults();
         
         const results = this.roll(this.currentRollType);
         await this.playAnimation(results);
@@ -1241,7 +1369,7 @@ class GachaSystem {
         img.style.transition = 'opacity .4s ease';
         wrap.appendChild(img);
         document.body.appendChild(wrap);
-        requestAnimationFrame(()=> img.style.opacity = '1');
+        requestAnimationFrame(()=> { img.style.opacity = '1'; });
         const audio = new Audio(audioSrc);
         audio.play().catch(()=>{});
         audio.addEventListener('ended', ()=> {
@@ -1365,6 +1493,15 @@ class GachaSystem {
             const card = this.createGalleryCharacterCard(character, isUnlocked);
             grid.appendChild(card);
         });
+
+        // special BLACK ITEM gallery entry for "GOD IS LOVE YOU"
+        const godUnlocked = !!this.itemInventory['GOD IS LOVE YOU'];
+        const godCard = this.createGalleryItemCard({
+            id: 'god-is-love-you',
+            name: 'GOD IS LOVE YOU',
+            rarity: 'black'
+        }, godUnlocked);
+        grid.appendChild(godCard);
         
         // Show modal with fade in effect
         modal.style.display = 'flex';
@@ -1414,6 +1551,58 @@ class GachaSystem {
         
         return card;
     }
+
+    // new helper to create an item-style gallery card (for the special black item)
+    createGalleryItemCard(itemData, isUnlocked) {
+        const card = document.createElement('div');
+        card.className = `gallery-character gallery-item ${isUnlocked ? `rarity-${itemData.rarity}` : 'locked god-locked'}`;
+        card.dataset.itemId = itemData.id;
+
+        // portrait area will show gif/icon for locked state and a dark aura
+        const portrait = document.createElement('div');
+        portrait.className = 'character-portrait god-portrait';
+        if (!isUnlocked) {
+            // locked: use godisloveyou.gif (we create a png asset with similar visuals) as background icon
+            portrait.style.backgroundImage = `url('godisloveyou.png')`;
+            portrait.style.backgroundSize = 'cover';
+            portrait.style.filter = 'grayscale(0.8) contrast(0.6) brightness(0.25)';
+        } else {
+            // unlocked: show bold text/graphic
+            portrait.textContent = 'GOD';
+            portrait.style.background = 'linear-gradient(135deg,#0b0b0b,#1a1a1a)';
+            portrait.style.color = '#fff';
+        }
+
+        const name = document.createElement('div');
+        name.className = 'character-name god-name';
+        name.textContent = isUnlocked ? itemData.name : '';
+
+        const rarity = document.createElement('div');
+        rarity.className = 'character-rarity god-rarity';
+        rarity.textContent = isUnlocked ? itemData.name : '???'; // when unlocked show phrase instead of stars
+
+        card.appendChild(portrait);
+        card.appendChild(name);
+        card.appendChild(rarity);
+
+        // overlay chains/aura handled by CSS classes
+        // clicking: if unlocked -> trigger God sequence; if locked -> show a small tooltip/explain
+        card.addEventListener('click', () => {
+            if (isUnlocked) {
+                this.triggerGodSequence();
+            } else {
+                // small visual feedback for locked card
+                const tip = document.createElement('div');
+                tip.className = 'god-locked-tip';
+                tip.textContent = 'Locked — Acquire the item from a roll to unlock';
+                document.body.appendChild(tip);
+                setTimeout(()=> tip.classList.add('show'), 10);
+                setTimeout(()=> { tip.classList.remove('show'); setTimeout(()=>tip.remove(),300); }, 1600);
+            }
+        });
+
+        return card;
+    }
     
     showSellModal() {
         document.getElementById('sellModal').style.display = 'flex';
@@ -1448,6 +1637,17 @@ class GachaSystem {
         });
         
         this.updateSellTotal();
+    }
+    
+    // Move every available item in inventory into the sell queue
+    addAllToSellQueue() {
+        Object.entries(this.itemInventory).forEach(([itemName, data]) => {
+            const available = data.count - (this.sellQueue[itemName] || 0);
+            if (available > 0) {
+                this.sellQueue[itemName] = (this.sellQueue[itemName] || 0) + available;
+            }
+        });
+        this.updateSellLists();
     }
     
     createSellItem(itemName, count, rarity, listType) {
@@ -1541,7 +1741,7 @@ class GachaSystem {
     }
     
     updateStellarCoinDisplay() {
-        document.getElementById('stellarCoinAmount').textContent = this.stellarCoin;
+        document.getElementById('stellarCoinAmount').textContent = this.easyMode ? '∞' : this.stellarCoin;
         // show username somewhere (if present)
         if (this.username) {
             const logo = document.querySelector('.logo');
@@ -1656,6 +1856,45 @@ class GachaSystem {
             toast.classList.remove('visible');
         }, holdMs + 700);
     }
+
+    // helper to parse YouTube ID from multiple URL formats
+    parseYouTubeId(url) {
+        if (!url || typeof url !== 'string') return null;
+        // common patterns
+        const patterns = [
+            /(?:youtube\.com\/watch\?.*v=|youtube\.com\/v\/|youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/,
+            /(?:youtu\.be\/)([A-Za-z0-9_-]{11})/,
+            /([A-Za-z0-9_-]{11})/ // fallback pick first 11-char token
+        ];
+        for (const p of patterns) {
+            const m = url.match(p);
+            if (m && m[1]) return m[1];
+        }
+        return null;
+    }
+
+    // helpers for video modal UI
+    showVideoError(msg) {
+        const el = document.getElementById('videoError');
+        if (!el) return;
+        el.textContent = msg;
+        el.style.display = '';
+        // hide thumbnail & disable actions when error shown
+        document.getElementById('videoThumb').style.display = 'none';
+        document.getElementById('downloadMp4Btn').disabled = true;
+        document.getElementById('downloadMp3Btn').disabled = true;
+    }
+
+    clearVideoScan() {
+        const img = document.getElementById('videoThumb');
+        if (img) { img.src = ''; img.style.display = 'none'; }
+        document.getElementById('videoTitle').textContent = '';
+        document.getElementById('videoAuthor').textContent = '';
+        document.getElementById('videoError').style.display = 'none';
+        document.getElementById('downloadMp4Btn').disabled = true;
+        document.getElementById('downloadMp3Btn').disabled = true;
+        this._videoDownloadId = null;
+    }
 }
 
 // Animation keyframes for shake effects
@@ -1694,8 +1933,7 @@ const shakeKeyframes = `
     50% { transform: translate(-50%,-50%) rotate(2deg) scale(1.01); }
     75% { transform: translate(-50%,-50%) rotate(-1deg) scale(1.02); }
     100% { transform: translate(-50%,-50%) rotate(0deg) scale(1); }
-}
-`;
+}`;
 
 // Inject animations
 const style = document.createElement('style');

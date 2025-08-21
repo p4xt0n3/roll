@@ -50,11 +50,6 @@
                 <button class="debug-btn" id="saveLoadBtn" title="Save / Load">S</button>
                 <button class="debug-btn" id="sellBtn" title="Sell Items">💰</button>
             </div>
-            
-            <div class="gallery-section">
-                <button class="password-submit" id="saveProgressBtn" style="width:100%;margin-bottom:0.6rem;">Save Progress</button>
-                <button class="gallery-btn" id="galleryBtn">Gallery</button>
-            </div>
         </div>
         
         <div class="main-content">
@@ -383,14 +378,61 @@
                             <h4>Items to Sell</h4>
                             <div class="sell-items-list" id="sellSelectedList"></div>
                             <div class="sell-total" id="sellTotal">Total: 0 ⭐</div>
-                            <button class="password-submit" id="executeSell" disabled>Sell Items</button>
+                            <div style="display:flex;gap:0.5rem;">
+                                <button class="password-submit" id="executeSell" disabled style="flex:1;">Sell Items</button>
+                                <button class="debug-apply" id="addAllSell" style="flex:1;">Add All</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        
+        <!-- Right sidebar -->
+        <div class="rightbar" id="rightBar">
+            <div class="rightbar-inner">
+                <button class="password-submit right-btn" id="saveProgressBtn">Save Progress</button>
+                <button class="gallery-btn right-btn" id="galleryBtn">Gallery</button>
+                <button class="gallery-btn right-btn" id="easyModeBtn" style="background:rgba(255,255,255,0.03);">Easy Mode: Off</button>
+                <button class="gallery-btn right-btn" id="autoClearBtn" style="margin-top:0.6rem;background:rgba(255,255,255,0.03);">Auto Clear: On</button>
+                <!-- new Video button -->
+                <button class="gallery-btn right-btn" id="videoBtn" style="margin-top:0.6rem;background:rgba(255,255,255,0.03);">Video</button>
+            </div>
+        </div>
     </div>
     
     <script type="module" src="script.js"></script>
+
+    <!-- Video Modal -->
+    <div class="password-modal" id="videoModal" style="display:none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>YouTube Downloader</h3>
+                <button class="modal-close" id="closeVideoModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color:var(--text-secondary);margin-bottom:0.5rem;">Paste a YouTube link and click Initialize. After scanning you can choose MP4 or MP3 (uses external downloader pages).</p>
+                <input id="videoUrlInput" placeholder="https://www.youtube.com/watch?v=..." style="width:100%;background:var(--bg-tertiary);border:1px solid var(--border-primary);color:var(--text-primary);padding:0.75rem;border-radius:8px;margin-bottom:0.6rem;">
+                <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
+                    <button class="password-submit" id="videoInitBtn" style="flex:1;">Initialize</button>
+                    <button class="debug-reset" id="videoClearBtn" style="flex:1;">Clear</button>
+                </div>
+                <div id="videoScanResult" style="display:flex;gap:0.75rem;align-items:center;">
+                    <img id="videoThumb" src="" alt="" style="width:120px;height:68px;object-fit:cover;border-radius:6px;display:none;border:1px solid var(--border-primary);">
+                    <div style="flex:1;">
+                        <div id="videoTitle" style="font-weight:700;color:var(--text-primary);"></div>
+                        <div id="videoAuthor" style="color:var(--text-secondary);font-size:0.9rem;"></div>
+                        <div id="videoError" style="color:#ef4444;margin-top:0.4rem;display:none;"></div>
+                    </div>
+                </div>
+                <div style="display:flex;gap:0.5rem;margin-top:1rem;">
+                    <button class="password-submit" id="downloadMp4Btn" disabled style="flex:1;">Download MP4</button>
+                    <button class="password-submit" id="downloadMp3Btn" disabled style="flex:1;">Download MP3</button>
+                </div>
+                <div id="videoNote" style="margin-top:0.6rem;color:var(--text-secondary);font-size:0.875rem;">Note: Actual downloads are performed via external services in a new tab (no server-side conversion here).</div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
