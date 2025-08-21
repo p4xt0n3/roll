@@ -1172,7 +1172,7 @@ class GachaSystem {
         };
         (async () => {
             await showThenSwap('nahidwin.jpg', 2000);
-            await showThenSwap('gojoat.jpg', 2000);
+            await showThenSwap('gojover.jpg', 2000);
             wrap.remove();
         })();
     }
