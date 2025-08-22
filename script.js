@@ -29,7 +29,11 @@ const gameData = {
             "Piece of Bone...?", "Rokakaka Fruit", "Hamon Manual", "Spin Manual", "Fragment of Tyranny",
             "Eye of Ender", "Golden Apple", "Ribcage of Saint Corpse Part", "Arm of the Saint Corpse Part",
             "Heart of the Saint Corpse Part", "Pelvis of the Saint Corpse Part", "Skull of the Saint Corpse Part",
-            "Leg of the Saint Corpse Part", "Eye of the Saint Corpse Part"
+            "Leg of the Saint Corpse Part", "Eye of the Saint Corpse Part",
+            // newly added by user:
+            "Pretty Hand", "Mysterious DISC", "The Sword of Quadratic Equation", "The Fist of E=MC2",
+            "The Dagger of 1/2*r*θ", "Kishibe Rohan's Original Manuscript", "DIO's Diary", "Ultraseven's Head Axe",
+            "Luck & Pluck", "Caesar's Headband", "Immortal Ascension Fruit"
         ],
         red: [
             "The Card", "Rubix of 6th Stage Seal", "The All-See Eye of 333", "Requiem Arrow", "The Perfect DNA",
@@ -38,7 +42,10 @@ const gameData = {
             // NEW Red-tier items requested:
             "Sukuna's Finger", "Six Eyes", "The Bones of 87", "New Rokakaka Fruit", "Umbra",
             "Original Blacksite", "Calamity's Flow in a Bottle", "The Whole Corpse of the Saint",
-            "The Bible", "The Tale of The Old Universe"
+            "The Bible", "The Tale of The Old Universe",
+            // newly added by user:
+            "DIO's Bone", "Crowbar from CS:GO", "Plasma Spark Tower", "Spark Lence",
+            "Reverse Cursed Technique Manual", "The Formula Weapon Set", "Executioner's Sword"
         ],
         black: [
             "GOD IS LOVE YOU"
@@ -53,7 +60,9 @@ const gameData = {
             // NEW Gold characters requested:
             "Kamustrophy Subforce", "Veroy Subforce", "Casual Subforce", "G-033 Subforce", "G-Adv Subforce",
             "Rister", "Shadow", "QingXuan", "Chiya Harano", "Trasy", "Joseph", "Cirys", "Deep Abyss",
-            "Reinforced", "Wood", "The Mysterio", "Hyper", "Misma", "Collision"
+            "Reinforced", "Wood", "The Mysterio", "Hyper", "Misma", "Collision",
+            // newly added by user:
+            "Moriarty Zecto Crescent", "Asagi Mutsuki", "Z", "Gojo Satoru", "Ryomen Sukuna", "Yuji Itadori", "Juan🐎"
         ],
         red: [
             "The Perfect Alternate, G", "Elemental Unleashed, Paxton", "The Red Dust Prodigy, Nathan",
@@ -65,7 +74,12 @@ const gameData = {
             "The Hope & Love, Trasy", "The Greatest Joker, Joseph", "Holyght Released, Cirys",
             "Unseen Lethal Danger, Deep Abyss", "The Invincible Defence, Reinforced",
             "Cosmical Colossal Woodcrawler, Wood", "The First Alternate, The Mysterio",
-            "The Deep Horror Within, Hyper", "The Last Planner, Misma", "Know Everything Exist, Collision"
+            "The Deep Horror Within, Hyper", "The Last Planner, Misma", "Know Everything Exist, Collision",
+            // newly added by user:
+            "The Genius of Crescent Family, Moriarty Zecto Crescent", "Chief of Staff, Asagi Mutsuki",
+            "The One who stays outside Universe, Z", "The Strongest of Today, Gojo Satoru",
+            "The Strongest in History, Ryomen Sukuna", "The one who use Black Flash as m1, Yuji Itadori",
+            "The Horse on Balcony, Juan🐎"
         ]
     }
 };
@@ -75,11 +89,95 @@ class GachaSystem {
         this.currentRollType = 1;
         this.isRolling = false;
         this.stellarCoin = 100; // start with 100 StellarCoin by default
+        this.language = 'en'; // 'en' or 'zh' - affects displayed names only
+        this.theme = localStorage.getItem('ttou_theme') || 'dark'; // 'dark' or 'light'
+        this.translations = {
+            // only mapping for items and characters needed for UI translation
+            items: {
+                // Blue tier
+                "Tier I Spiritual Staff Embryo":"灵杖初胚","Tier I Magical Dagger Embryo":"魔匕初胚","Tier I Enchanted Armor Core":"附魔铠核心",
+                "Mystic Lotus Petal":"神秘莲花瓣","Scroll of Ignis":"伊格尼斯卷轴","Tier I Mana Crystal":"魔力结晶初阶","Tier I Stamina Potion":"体力药剂初阶",
+                "Ethereal Frost Ore":"虚灵寒霜矿","Universal Bestiary":"万象兽典","Tier I Spirit Ring Embryo":"灵戒初胚","Celestial Feather Charm":"天羽护符",
+                "Book of Aqua":"水之书","Tier I Spiritual Bow Embryo":"灵弓初胚","Tier I Alchemy Catalyst":"炼金催化初阶","Blessed Herb Root":"祝福草根",
+                "Ancient Rune Tablet":"上古符文石板","Phantom Amber Shard":"幻影琥珀碎片","Tier I Magical Shield Embryo":"魔盾初胚","Book of Terra":"大地之书",
+                "Runic Translation Key":"符文译钥",
+                // Purple tier (partial list provided)
+                "The Mysterious Rubix":"神秘魔方","Stand Arrow":"替身箭矢","Book of Undead":"亡灵之书","Bow of Salvation":"救赎之弓",
+                "Hi-Tec-Radar":"高科技雷达","Unawakened Scepter":"未觉醒权杖","Crown of Eternal Twilight":"永暮之冠","Phoenix Heart Core":"凤凰心核",
+                "Divine Gear Relic":"神圣齿轮遗物","Sword of Forgotten Kings":"遗忘王之剑","Obsidian Dragon Fang":"黑曜龙牙","Astral Compass":"星界罗盘",
+                "Moonveil Talisman":"月纱护符","Crystalized Soul Fragment":"结晶灵魂碎片","Mask of the Thousand Faces":"千面之具",
+                "Bloodforged Gauntlet":"血铸护手","Orb of Dimensional Rift":"维裂之球","Flamebound Grimoire":"炎缚魔典","Echoing Harp of Spirits":"灵回之琴","Starlight War Banner":"星光战旗",
+                // Gold tier (includes added items)
+                "Crown of Primordial Kings":"元始王冠","Eternal Flame Core":"永燃火核","Blade of the Abysswalker":"深渊行者之刃",
+                "Heavenpiercer Lance":"穿天之枪","Orb of Infinite Echoes":"无限回响之球","Wings of the Fallen Seraph":"堕炽天使之翼",
+                "Dragonlord's Heartstone":"龙王心石","Dragon Ball":"龙珠","Scepter of Reality's End":"终实之杖","Chaosforged Armor":"混铸战甲",
+                "Eye of the Void Serpent":"虚蛇之眼","Worldshaper Hammer":"造世之锤","Sacred Chalice of Aeons":"永劫圣杯","Book of All Origins":"万源之书",
+                "Timeweaver's Hourglass":"编时沙漏","Ring of the Endless Dream":"无尽梦环","Basebat of 333":"333之球棒","Hypersonic Multitool":"超音速多能工具",
+                "Scepter of Hope & Love":"希望与爱之杖","Armside Supersonic Blade":"侧臂超音刃","Silence":"肃静","The Devourer of Souls":"灵魂吞噬者",
+                "The SoulShatter":"灵魂碎裂者","Joker Masker":"小丑之面","Holgyht Orb":"圣光之球","Voidus Twinblade":"虚无双刃",
+                "Gojo's Blindfold":"五条眼罩","Wheel of Dharma":"法轮","Sword Piece of Umbra":"本影剑片","Mysterious Hi-Tech Mask":"神秘高科面罩",
+                "Piece of Bone...?":"骨之碎片...?","Rokakaka Fruit":"洛卡卡卡果实","Hamon Manual":"波纹修炼手册","Spin Manual":"回旋修炼手册",
+                "Fragment of Tyranny":"暴虐碎片","Eye of Ender":"末影之眼","Golden Apple":"金苹果",
+                "Ribcage of Saint Corpse Part":"圣遗体之肋骨","Arm of the Saint Corpse Part":"圣遗体之臂","Heart of the Saint Corpse Part":"圣遗体之心脏",
+                "Pelvis of the Saint Corpse Part":"圣遗体之骨盆","Skull of the Saint Corpse Part":"圣遗体之头骨","Leg of the Saint Corpse Part":"圣遗体之腿",
+                "Eye of the Saint Corpse Part":"圣遗体之眼",
+                // newly added Gold items translations
+                "Pretty Hand":"美丽的手","Mysterious DISC":"神秘光碟","The Sword of Quadratic Equation":"二次函数之剑",
+                "The Fist of E=MC2":"E=MC2之拳","The Dagger of 1/2*r*θ":"1/2*r*θ小刀","Kishibe Rohan's Original Manuscript":"岸边露伴的漫画原稿",
+                "DIO's Diary":"DIO的日记","Ultraseven's Head Axe":"七爷的头镖","Luck & Pluck":"幸运&勇气之剑",
+                "Caesar's Headband":"西撒的头巾","Immortal Ascension Fruit":"升仙果",
+                // Red tier
+                "The Card":"卡牌","Rubix of 6th Stage Seal":"六阶封印魔方","The All-See Eye of 333":"333全知全能之眼",
+                "Requiem Arrow":"镇魂曲之箭","The Perfect DNA":"完美基因","The Manual of ⭕💴":"⭕💴手册",
+                "Level V Authority Keycard (G Foundation)":"V级权限卡（G基金会）","True Devourer of All Souls":"真·灵魂吞噬者","Miyabi's Sealed Katana":"星见雅之封刀",
+                "Sukuna's Finger":"宿傩之指","Six Eyes":"六眼","The Bones of 87":"87的骨","New Rokakaka Fruit":"新洛卡卡卡果实",
+                "Umbra":"本影","Original Blacksite":"初源黑网","Calamity's Flow in a Bottle":"瓶中灾厄洪流","The Whole Corpse of the Saint":"圣人遗体",
+                "The Bible":"圣经","The Tale of The Old Universe":"旧宇宙物语",
+                // newly added Red items translations
+                "DIO's Bone":"DIO的骨头","Crowbar from CS:GO":"来自CS:GO的撬棍","Plasma Spark Tower":"等离子火花塔",
+                "Spark Lence":"神光棒","Reverse Cursed Technique Manual":"反转术士手册","The Formula Weapon Set":"公式武器套",
+                "Executioner's Sword":"处刑者之剑",
+                // Black
+                "GOD IS LOVE YOU":"GOD IS LOVE YOU"
+            },
+            characters: {
+                // Purple
+                "Dak":"达克","M":"M","Rewd":"雷伍德","Saskon":"萨斯科恩","Echer":"伊切尔","Bescre":"贝斯克雷","Zes":"泽斯",
+                "Trons":"琼斯","Frost":"寒霜","LinYuan":"琳渊",
+                // Gold
+                "G":"G","Paxton":"帕克斯顿","Nathan":"内森","Karos":"卡洛斯","Kames":"凯姆斯","Litem":"利特姆",
+                "『The Lover』":"『恋人』","The Old Duke":"老伯爵","Kasi":"卡西","Lauris RaruzY":"劳里斯·拉鲁兹",
+                "Kamustrophy Subforce":"卡姆斯托奇小队","Veroy Subforce":"维罗伊小队","Casual Subforce":"随机应变小队",
+                "G-033 Subforce":"G-033小队","G-Adv Subforce":"G-Adv小队","Rister":"里斯特","Shadow":"黑影","QingXuan":"清轩",
+                "Chiya Harano":"千也原乃","Trasy":"切尔茜","Joseph":"约瑟夫","Cirys":"希瑞斯","Deep Abyss":"极渊","Reinforced":"强化",
+                "Wood":"腐木","The Mysterio":"神秘客","Hyper":"海帕","Misma":"米斯玛","Collision":"碰撞",
+                // newly added Gold characters translations
+                "Moriarty Zecto Crescent":"莫里亚蒂 · 泽克托 · 克里森特","Asagi Mutsuki":"浅黄睦月","Z":"Z","Gojo Satoru":"五条悟",
+                "Ryomen Sukuna":"两面宿挪","Yuji Itadori":"虎杖悠仁","Juan🐎":"Juan🐎",
+                // Red (selected examples)
+                "The Perfect Alternate, G":"最完美的伪人，G","Elemental Unleashed, Paxton":"元素释放，帕克斯顿",
+                "The Red Dust Prodigy, Nathan":"血尘天骄，内森","Cuber Requiem, Kasi":"方者镇魂曲，卡西","The Emperor Awakes, Karos":"皇者觉醒，卡洛斯",
+                "Assassin Back on Job, The Old Duke":"刺客回归，老伯爵","The True Speach 100% Unsealed, Lauris RaruzY":"真言100%解封，劳里斯·拉鲁兹",
+                "Cosmical Rubix 100% Awaken, Rister":"宇宙魔方100%觉醒，里斯特","The Assassin in Darkness, Shadow":"黑暗中的刺客，黑影",
+                "Spiritual Devastation, QingXuan":"灵魄覆灭，清轩","Fallen Cherry Blossoms, Chiya Harano":"落樱哀花，千也原乃",
+                "The Hope & Love, Trasy":"希望与爱，切尔茜","The Greatest Joker, Joseph":"最伟大的小丑，约瑟夫","Holyght Released, Cirys":"圣光释放，希瑞斯",
+                "Unseen Lethal Danger, Deep Abyss":"无形致命危机，极渊","The Invincible Defence, Reinforced":"无敌防御，强化",
+                "Cosmical Colossal Woodcrawler, Wood":"宇宙巨型树爬者，腐木","The First Alternate, The Mysterio":"史上第一位伪人，神秘客",
+                "The Deep Horror Within, Hyper":"内心深层的恐惧，海帕","The Last Planner, Misma":"终末策士，米斯玛","Know Everything Exist, Collision":"知晓万物存在，碰撞",
+                // newly added Red characters translations
+                "The Genius of Crescent Family, Moriarty Zecto Crescent":"克里森特家族天才，莫里亚蒂 · 泽克托 · 克里森特",
+                "Chief of Staff, Asagi Mutsuki":"参谋长，浅黄睦月","The One who stays outside Universe, Z":"宇宙之外的人，Z",
+                "The Strongest of Today, Gojo Satoru":"现代最强，五条悟","The Strongest in History, Ryomen Sukuna":"古代最强，两面宿挪",
+                "The one who use Black Flash as m1, Yuji Itadori":"把黑闪当普攻，虎杖悠仁","The Horse on Balcony, Juan🐎":"阳台上的马，Juan🐎"
+            }
+        };
+        
         this.sellQueue = {}; // items to sell: { itemName: count }
         this.username = ''; // new: username persisted via localStorage
         
         this.easyMode = false; // NEW: Easy Mode default OFF
         this.autoClear = true; // NEW: Auto Clear default ON
+        this.skipAnimation = false; // NEW: Skip animation default OFF
         
         // Inventories
         this.characterInventory = []; // stores character names
@@ -101,8 +199,80 @@ class GachaSystem {
         // Current rates (modifiable)
         this.currentRates = { ...this.originalRates };
         
+        this.uiText = {
+            en: {
+                singleTitle: 'Single Pull',
+                singleDesc: 'Roll once for a chance at rare items',
+                tenTitle: '10-Pull',
+                tenDesc: 'Roll 10 times with guaranteed 4★ or higher',
+                rollNowSingle: 'SINGLE PULL',
+                rollNowTen: '10-PULL',
+                recentPulls: 'Recent Pulls',
+                clearAll: 'Clear All',
+                saveProgress: 'Save Progress',
+                gallery: 'Gallery',
+                easyModeOnOff: (on)=> `Easy Mode: ${on ? 'On' : 'Off'}`,
+                autoClearOnOff: (on)=> `Auto Clear: ${on ? 'On' : 'Off'}`,
+                video: 'Video',
+                settings: 'Settings',
+                sellItems: 'Sell Items',
+                inventory: 'Inventory',
+                crafting: 'Crafting',
+                saveLoadTitle: 'Save / Load Progress',
+                saveToLocal: 'Save to Local',
+                copyExport: 'Copy Export',
+                clearLocalSave: 'Clear Local Save',
+                importLoad: 'Import / Load',
+                galleryHeader: 'Character Gallery',
+                sellHeader: 'Sell Items',
+                sellInventory: 'Inventory Items',
+                sellToSell: 'Items to Sell',
+                sellTotalPrefix: 'Total:',
+                startupWelcome: 'Welcome',
+                settingsLangTitle: 'Language (Items & Characters)',
+                settingsNote: 'Note: This changes only displayed names of rolled items & characters.',
+                yes: 'Yes',
+                no: 'No'
+            },
+            zh: {
+                singleTitle: '单抽',
+                singleDesc: '抽1次以获得稀有物品的机会',
+                tenTitle: '十连',
+                tenDesc: '一次抽10次，保证4★或以上',
+                rollNowSingle: '单抽',
+                rollNowTen: '十连',
+                recentPulls: '最近抽取',
+                clearAll: '清除所有',
+                saveProgress: '保存进度',
+                gallery: '画廊',
+                easyModeOnOff: (on)=> `简单模式：${on ? '开启' : '关闭'}`,
+                autoClearOnOff: (on)=> `自动清除：${on ? '开启' : '关闭'}`,
+                video: '视频',
+                settings: '设置',
+                sellItems: '出售物品',
+                inventory: '背包',
+                crafting: '合成',
+                saveLoadTitle: '保存 / 导入 进度',
+                saveToLocal: '保存到本地',
+                copyExport: '复制导出',
+                clearLocalSave: '清除本地存档',
+                importLoad: '导入 / 载入',
+                galleryHeader: '角色画廊',
+                sellHeader: '出售物品',
+                sellInventory: '背包物品',
+                sellToSell: '要出售的物品',
+                sellTotalPrefix: '总计：',
+                startupWelcome: '欢迎',
+                settingsLangTitle: '语言（物品与角色）',
+                settingsNote: '注意：仅更改已抽到物品与角色的显示名称。',
+                yes: '是',
+                no: '否'
+            }
+        };
+        
         this.setupEventListeners();
         this.setupDebugSystem();
+        this.applyTheme(this.theme); // apply stored theme on init
         // show startup import/name modal on launch
         setTimeout(()=> this.initStartupFlow(), 100);
 
@@ -238,6 +408,17 @@ class GachaSystem {
         document.getElementById('closeVideoModal').addEventListener('click', ()=> document.getElementById('videoModal').style.display='none');
         document.getElementById('videoClearBtn').addEventListener('click', ()=> { document.getElementById('videoUrlInput').value=''; this.clearVideoScan(); });
 
+        // Skip Animation toggle
+        const skipBtn = document.getElementById('skipAnimBtn');
+        if (skipBtn) {
+            skipBtn.textContent = `Skip Animation: ${this.skipAnimation ? 'On' : 'Off'}`;
+            skipBtn.addEventListener('click', () => {
+                this.skipAnimation = !this.skipAnimation;
+                skipBtn.textContent = `Skip Animation: ${this.skipAnimation ? 'On' : 'Off'}`;
+                skipBtn.style.background = this.skipAnimation ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.03)';
+            });
+        }
+
         document.getElementById('videoInitBtn').addEventListener('click', async () => {
             const url = document.getElementById('videoUrlInput').value.trim();
             if (!url) { this.showVideoError('Please paste a YouTube link.'); return; }
@@ -298,6 +479,35 @@ class GachaSystem {
                 document.getElementById('sellModal').style.display = 'none';
             }
         });
+        
+        // Settings button
+        const settingsBtn = document.getElementById('settingsBtn');
+        if (settingsBtn) {
+            settingsBtn.addEventListener('click', () => {
+                document.getElementById('settingsModal').style.display = 'flex';
+                // pre-check radio
+                const radios = document.querySelectorAll('input[name="ttou-lang"]');
+                radios.forEach(r => r.checked = (r.value === this.language));
+            });
+        }
+        document.getElementById('closeSettingsModal').addEventListener('click', ()=> document.getElementById('settingsModal').style.display='none');
+        document.querySelectorAll('input[name="ttou-lang"]').forEach(r => {
+            r.addEventListener('change', (e) => {
+                this.setLanguage(e.target.value);
+            });
+        });
+
+        // Theme radio buttons in settings
+        document.querySelectorAll('input[name="ttou-theme"]').forEach(r => {
+            r.addEventListener('change', (e) => { this.applyTheme(e.target.value); });
+        });
+        // Reset settings button
+        const resetBtn = document.getElementById('resetSettingsBtn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                if (confirm('Do you want to Reset your settings?')) this.resetSettings();
+            });
+        }
     }
     
     setupDebugSystem() {
@@ -693,6 +903,8 @@ class GachaSystem {
         
         // Show animation
         animationContainer.style.display = 'flex';
+        // if skip enabled, short-circuit to immediate reveal
+        if (this.skipAnimation) { animationContainer.style.display = 'none'; return; }
         
         // Determine highest rarity
         const rarities = results.map(r => r.rarity);
@@ -735,6 +947,7 @@ class GachaSystem {
             pullText.textContent = 'Energy Surge...';
             pullOrb.style.background = 'linear-gradient(135deg, #a855f7, #c084fc)';
             overlay.style.background = 'rgba(68, 26, 68, 0.95)';
+            if (this.skipAnimation) { animationContainer.style.display = 'none'; return; }
             await this.sleep(1200);
         }
         
@@ -743,6 +956,7 @@ class GachaSystem {
             pullOrb.style.animation = 'orbPulse 2s ease-in-out infinite, shake 0.5s ease infinite';
             pullOrb.style.background = 'linear-gradient(135deg, #f59e0b, #fbbf24)';
             overlay.style.background = 'rgba(68, 58, 26, 0.95)';
+            if (this.skipAnimation) { animationContainer.style.display = 'none'; return; }
             await this.sleep(1200);
         }
         
@@ -751,6 +965,7 @@ class GachaSystem {
             pullOrb.style.animation = 'orbPulse 1s ease-in-out infinite, hardShake 0.3s ease infinite';
             pullOrb.style.background = 'linear-gradient(135deg, #ef4444, #f87171)';
             overlay.style.background = 'rgba(68, 26, 26, 0.95)';
+            if (this.skipAnimation) { animationContainer.style.display = 'none'; return; }
             await this.sleep(1500);
         }
         
@@ -760,10 +975,12 @@ class GachaSystem {
             pullOrb.style.backgroundSize = '400% 400%';
             pullOrb.style.animation = 'orbPulse 1s ease-in-out infinite, colorfulBg 2s ease infinite';
             overlay.style.background = 'linear-gradient(135deg, rgba(42, 26, 68, 0.95), rgba(58, 42, 85, 0.95), rgba(26, 68, 51, 0.95))';
+            if (this.skipAnimation) { animationContainer.style.display = 'none'; return; }
             await this.sleep(1500);
         }
         
         pullText.textContent = 'Revealing Results...';
+        if (this.skipAnimation) { animationContainer.style.display = 'none'; return; }
         await this.sleep(800);
         
         // Hide animation
@@ -809,9 +1026,12 @@ class GachaSystem {
         // for black special item, replace stars with the phrase
         const stars = result.rarity === 'black' ? 'GOD IS LOVE YOU' : '★'.repeat(result.stars);
         
+        // store original name for translation switching later
+        const displayName = this.translateName(result.name);
+        
         card.innerHTML = `
             <div class="result-header">
-                <div class="result-name">${result.name}</div>
+                <div class="result-name" data-orig-name="${result.name}">${displayName}</div>
                 <div class="result-stars">${stars}</div>
             </div>
             <div class="result-type-badge">${result.type === 'character' ? 'Character' : 'Item'}</div>
@@ -841,7 +1061,7 @@ class GachaSystem {
                 const el = document.createElement('div');
                 el.style.padding = '0.5rem 0';
                 el.style.borderBottom = '1px solid var(--border-primary)';
-                el.textContent = name;
+                el.textContent = this.translateName(name);
                 dest.appendChild(el);
             });
             document.getElementById('invCharsBtn').classList.add('debug-apply');
@@ -865,7 +1085,7 @@ class GachaSystem {
                 el.style.padding = '0.5rem 0';
                 el.style.borderBottom = '1px solid var(--border-primary)';
                 el.className = `inv-item rarity-${rarity}`;
-                el.innerHTML = `<div class="inv-name">${name}</div><div style="color:var(--text-secondary)">${count}×</div>`;
+                el.innerHTML = `<div class="inv-name">${this.translateName(name)}</div><div style="color:var(--text-secondary)">${count}×</div>`;
                 dest.appendChild(el);
             });
             document.getElementById('invItemsBtn').classList.add('debug-apply');
@@ -1043,6 +1263,114 @@ class GachaSystem {
         throw new Error('Invalid state object');
     }
 
+    // New: translate helper and UI refresh for language changes
+    translateName(original) {
+        if (!original) return original;
+        if (this.language === 'en') return original;
+        // check items first then characters
+        const ti = this.translations.items[original];
+        if (ti) return ti;
+        const tc = this.translations.characters[original];
+        if (tc) return tc;
+        return original;
+    }
+
+    setLanguage(lang) {
+        if (lang !== 'en' && lang !== 'zh') return;
+        this.language = lang;
+        // persist language so selection stays across sessions
+        try { localStorage.setItem('ttou_lang', this.language); } catch(e){}
+
+        // ensure the radio inputs reflect the change (keeps options visible / selectable)
+        document.querySelectorAll('input[name="ttou-lang"]').forEach(r => { r.checked = (r.value === this.language); });
+
+        // Refresh visible UI: results grid, inventory modal, gallery if open
+        // Update results grid cards
+        document.querySelectorAll('#resultsGrid .result-card').forEach(card => {
+            const nameEl = card.querySelector('.result-name');
+            if (!nameEl) return;
+            const orig = nameEl.dataset.origName || nameEl.textContent;
+            // store original if not present
+            if (!nameEl.dataset.origName) nameEl.dataset.origName = orig;
+            nameEl.textContent = this.translateName(nameEl.dataset.origName);
+            // update stars/phrase for black special if applicable (keep same)
+        });
+        // Update inventory display if open
+        if (document.getElementById('inventoryModal').style.display === 'flex') {
+            // preserve current tab. Force redraw using showInventory
+            const itemsBtnActive = document.getElementById('invItemsBtn').classList.contains('debug-apply');
+            this.showInventory(itemsBtnActive ? 'items' : 'characters');
+        }
+        // If gallery open, recreate it
+        if (document.getElementById('galleryModal').style.display === 'flex') {
+            this.showGallery();
+        }
+        // Apply UI static text translations
+        this.applyUIText();
+    }
+
+    // Apply static UI translations for many labels/buttons/modals
+    applyUIText() {
+        const txt = this.uiText[this.language] || this.uiText.en;
+        // Roll option headers
+        document.querySelectorAll('.roll-option').forEach(opt => {
+            const type = parseInt(opt.dataset.type);
+            const titleEl = opt.querySelector('.option-title');
+            const descEl = opt.querySelector('.option-description');
+            if (type === 1) { titleEl.textContent = txt.singleTitle; descEl.textContent = txt.singleDesc; }
+            if (type === 10) { titleEl.textContent = txt.tenTitle; descEl.textContent = txt.tenDesc; }
+        });
+        // Costs (keep formatting)
+        document.getElementById('singleCost').textContent = (this.language === 'zh') ? '10 ⭐' : '10 ⭐';
+        document.getElementById('tenCost').textContent = (this.language === 'zh') ? '100 ⭐' : '100 ⭐';
+        // Roll button text
+        const rollBtnText = this.currentRollType === 1 ? txt.rollNowSingle : txt.rollNowTen;
+        const rollBtn = document.getElementById('executeRoll');
+        if (rollBtn) rollBtn.querySelector('.btn-text').textContent = rollBtnText;
+        // Recent pulls & clear
+        const rh = document.querySelector('.results-header h3');
+        if (rh) rh.textContent = txt.recentPulls;
+        const clearBtn = document.getElementById('clearResults');
+        if (clearBtn) clearBtn.textContent = txt.clearAll;
+        // Right bar buttons
+        const sp = document.getElementById('saveProgressBtn'); if (sp) sp.textContent = txt.saveProgress;
+        const gb = document.getElementById('galleryBtn'); if (gb) gb.textContent = txt.gallery;
+        const eb = document.getElementById('easyModeBtn'); if (eb) eb.textContent = txt.easyModeOnOff(this.easyMode);
+        const ab = document.getElementById('autoClearBtn'); if (ab) ab.textContent = txt.autoClearOnOff(this.autoClear);
+        const vb = document.getElementById('videoBtn'); if (vb) vb.textContent = txt.video;
+        const sb = document.getElementById('settingsBtn'); if (sb) sb.textContent = txt.settings;
+        // Save/Load modal labels
+        const sml = document.querySelector('#saveLoadModal .modal-header h3'); if (sml) sml.textContent = txt.saveLoadTitle;
+        const saveToLocalBtn = document.getElementById('saveToLocal'); if (saveToLocalBtn) saveToLocalBtn.textContent = txt.saveToLocal;
+        const exportCopyBtn = document.getElementById('exportCopy'); if (exportCopyBtn) exportCopyBtn.textContent = txt.copyExport;
+        const clearSaveBtn = document.getElementById('clearSave'); if (clearSaveBtn) clearSaveBtn.textContent = txt.clearLocalSave;
+        const importBtn = document.getElementById('importFromTextarea'); if (importBtn) importBtn.textContent = txt.importLoad;
+        // Gallery header
+        const gh = document.querySelector('.gallery-header h2'); if (gh) gh.textContent = txt.galleryHeader;
+        // Sell modal headers
+        const sellHdr = document.querySelector('#sellModal .modal-header h3'); if (sellHdr) sellHdr.textContent = txt.sellHeader;
+        const sellInv = document.querySelector('#sellModal .sell-section h4'); if (sellInv) sellInv.textContent = txt.sellInventory;
+        // Update sell total label prefix
+        const sellTotal = document.getElementById('sellTotal'); if (sellTotal) {
+            // keep the numeric suffix but update prefix
+            const match = sellTotal.textContent.match(/([0-9,\s⭐]*)$/);
+            const suffix = match ? match[0].trim() : '0 ⭐';
+            sellTotal.textContent = `${txt.sellTotalPrefix} ${suffix}`;
+        }
+        // Startup modal translations
+        const smTitle = document.querySelector('#startupModal .modal-header h3'); if (smTitle) smTitle.textContent = txt.startupWelcome;
+        // Settings modal title & note
+        const settTitle = document.querySelector('#settingsModal .modal-header h3'); if (settTitle) settTitle.textContent = txt.settings;
+        const langTitle = document.querySelector('#settingsModal h4'); if (langTitle) langTitle.textContent = txt.settingsLangTitle;
+        const noteEl = document.getElementById('settingsNoteText'); if (noteEl) noteEl.textContent = txt.settingsNote;
+        // Buttons with simple yes/no
+        const musicYes = document.getElementById('musicYes'); if (musicYes) musicYes.textContent = txt.yes;
+        const musicNo = document.getElementById('musicNo'); if (musicNo) musicNo.textContent = txt.no;
+
+        // Ensure language radio reflects current language (safe-guard if settings modal is open)
+        document.querySelectorAll('input[name="ttou-lang"]').forEach(r => { r.checked = (r.value === this.language); });
+    }
+
     appendCmdLine(text) {
         const out = document.getElementById('cmdOutput');
         if (!out) return;
@@ -1144,7 +1472,7 @@ class GachaSystem {
                 document.documentElement.style.setProperty('--bg-secondary','#161620');
                 document.documentElement.style.setProperty('--bg-tertiary','#1e1e2a');
                 document.documentElement.style.setProperty('--text-primary','#ffffff');
-                this.appendCmdLine('Dark mode enabled.');
+                document.documentElement.style.setProperty('--border-primary','#2a2a3a');
                 break;
             case '/godisloveyou':
                 this.appendCmdLine('Triggering GOD IS LOVE YOU sequence...');
@@ -1473,137 +1801,54 @@ class GachaSystem {
         setTimeout(()=>{ left.style.opacity='0'; right.style.opacity='0'; setTimeout(()=>wrap.remove(),400); }, 2500);
     }
 
-    showGallery() {
-        const modal = document.getElementById('galleryModal');
-        const grid = document.getElementById('galleryGrid');
-        
-        // Clear existing content
-        grid.innerHTML = '';
-        
-        // Get all characters from game data
-        const allCharacters = [
-            ...gameData.characters.purple.map(name => ({ name, rarity: 'purple', stars: 4 })),
-            ...gameData.characters.gold.map(name => ({ name, rarity: 'gold', stars: 5 })),
-            ...gameData.characters.red.map(name => ({ name, rarity: 'red', stars: 6 }))
-        ];
-        
-        // Create character cards
-        allCharacters.forEach(character => {
-            const isUnlocked = this.characterInventory.includes(character.name);
-            const card = this.createGalleryCharacterCard(character, isUnlocked);
-            grid.appendChild(card);
-        });
-
-        // special BLACK ITEM gallery entry for "GOD IS LOVE YOU"
-        const godUnlocked = !!this.itemInventory['GOD IS LOVE YOU'];
-        const godCard = this.createGalleryItemCard({
-            id: 'god-is-love-you',
-            name: 'GOD IS LOVE YOU',
-            rarity: 'black'
-        }, godUnlocked);
-        grid.appendChild(godCard);
-        
-        // Show modal with fade in effect
-        modal.style.display = 'flex';
-        requestAnimationFrame(() => {
-            modal.classList.add('show');
-        });
-        
-        // Close on overlay click
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                this.hideGallery();
-            }
-        });
-    }
-    
-    hideGallery() {
-        const modal = document.getElementById('galleryModal');
-        modal.classList.remove('show');
-        setTimeout(() => {
-            modal.style.display = 'none';
-        }, 400);
-    }
-    
-    createGalleryCharacterCard(character, isUnlocked) {
-        const card = document.createElement('div');
-        card.className = `gallery-character ${isUnlocked ? `rarity-${character.rarity}` : 'locked'}`;
-        
-        const portrait = document.createElement('div');
-        portrait.className = 'character-portrait';
-        portrait.textContent = isUnlocked ? character.name.charAt(0).toUpperCase() : '?';
-        
-        const name = document.createElement('div');
-        name.className = 'character-name';
-        name.textContent = isUnlocked ? character.name : '???';
-        
-        const rarity = document.createElement('div');
-        rarity.className = 'character-rarity';
-        rarity.textContent = isUnlocked ? '★'.repeat(character.stars) : '???';
-        
-        const chains = document.createElement('div');
-        chains.className = 'chains-overlay';
-        
-        card.appendChild(portrait);
-        card.appendChild(name);
-        card.appendChild(rarity);
-        card.appendChild(chains);
-        
-        return card;
-    }
-
-    // new helper to create an item-style gallery card (for the special black item)
-    createGalleryItemCard(itemData, isUnlocked) {
-        const card = document.createElement('div');
-        card.className = `gallery-character gallery-item ${isUnlocked ? `rarity-${itemData.rarity}` : 'locked god-locked'}`;
-        card.dataset.itemId = itemData.id;
-
-        // portrait area will show gif/icon for locked state and a dark aura
-        const portrait = document.createElement('div');
-        portrait.className = 'character-portrait god-portrait';
-        if (!isUnlocked) {
-            // locked: use godisloveyou.gif (we create a png asset with similar visuals) as background icon
-            portrait.style.backgroundImage = `url('godisloveyou.png')`;
-            portrait.style.backgroundSize = 'cover';
-            portrait.style.filter = 'grayscale(0.8) contrast(0.6) brightness(0.25)';
+    // Apply theme (dark/light) and persist
+    applyTheme(theme) {
+        this.theme = theme === 'light' ? 'light' : 'dark';
+        localStorage.setItem('ttou_theme', this.theme);
+        if (this.theme === 'light') {
+            document.documentElement.style.setProperty('--bg-primary','#ffffff');
+            document.documentElement.style.setProperty('--bg-secondary','#f5f5f5');
+            document.documentElement.style.setProperty('--bg-tertiary','#ffffff');
+            document.documentElement.style.setProperty('--text-primary','#0a0a0f');
+            document.documentElement.style.setProperty('--border-primary','#e5e7eb');
+            // adjust other accent if needed
         } else {
-            // unlocked: show bold text/graphic
-            portrait.textContent = 'GOD';
-            portrait.style.background = 'linear-gradient(135deg,#0b0b0b,#1a1a1a)';
-            portrait.style.color = '#fff';
+            document.documentElement.style.setProperty('--bg-primary','#0a0a0f');
+            document.documentElement.style.setProperty('--bg-secondary','#161620');
+            document.documentElement.style.setProperty('--bg-tertiary','#1e1e2a');
+            document.documentElement.style.setProperty('--text-primary','#ffffff');
+            document.documentElement.style.setProperty('--border-primary','#2a2a3a');
         }
-
-        const name = document.createElement('div');
-        name.className = 'character-name god-name';
-        name.textContent = isUnlocked ? itemData.name : '';
-
-        const rarity = document.createElement('div');
-        rarity.className = 'character-rarity god-rarity';
-        rarity.textContent = isUnlocked ? itemData.name : '???'; // when unlocked show phrase instead of stars
-
-        card.appendChild(portrait);
-        card.appendChild(name);
-        card.appendChild(rarity);
-
-        // overlay chains/aura handled by CSS classes
-        // clicking: if unlocked -> trigger God sequence; if locked -> show a small tooltip/explain
-        card.addEventListener('click', () => {
-            if (isUnlocked) {
-                this.triggerGodSequence();
-            } else {
-                // small visual feedback for locked card
-                const tip = document.createElement('div');
-                tip.className = 'god-locked-tip';
-                tip.textContent = 'Locked — Acquire the item from a roll to unlock';
-                document.body.appendChild(tip);
-                setTimeout(()=> tip.classList.add('show'), 10);
-                setTimeout(()=> { tip.classList.remove('show'); setTimeout(()=>tip.remove(),300); }, 1600);
-            }
-        });
-
-        return card;
+        // update radio checked state if settings modal present
+        document.querySelectorAll('input[name="ttou-theme"]').forEach(r => { r.checked = (r.value === this.theme); });
     }
-    
+
+    // Reset settings to defaults (language, theme, easy mode, auto clear, debug rates)
+    resetSettings() {
+        // default values
+        this.language = 'en';
+        this.easyMode = false;
+        this.autoClear = true;
+        this.currentRates = { ...this.originalRates };
+        this.stellarCoin = 100;
+        // reset theme to default dark
+        this.applyTheme('dark');
+        // apply UI updates
+        localStorage.removeItem('ttou_theme');
+        // reset language radios and apply translations
+        document.querySelectorAll('input[name="ttou-lang"]').forEach(r => r.checked = (r.value === this.language));
+        this.setLanguage(this.language);
+        // update rightbar toggles display
+        const easyBtn = document.getElementById('easyModeBtn');
+        if (easyBtn) { easyBtn.textContent = this.uiText[this.language].easyModeOnOff(this.easyMode); easyBtn.style.background = 'rgba(255,255,255,0.03)'; }
+        const autoBtn = document.getElementById('autoClearBtn');
+        if (autoBtn) { autoBtn.textContent = this.uiText[this.language].autoClearOnOff(this.autoClear); autoBtn.style.background = 'rgba(34,197,94,0.08)'; }
+        // update debug inputs if debug modal open
+        if (document.getElementById('debugModal').style.display === 'flex') this.updateDebugInputs();
+        this.updateStellarCoinDisplay();
+    }
+
+    // Save to localStorage from modal
     showSellModal() {
         document.getElementById('sellModal').style.display = 'flex';
         this.sellQueue = {};
