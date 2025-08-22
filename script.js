@@ -135,7 +135,7 @@ class GachaSystem {
                 "The Bible":"圣经","The Tale of The Old Universe":"旧宇宙物语",
                 // newly added Red items translations
                 "DIO's Bone":"DIO的骨头","Crowbar from CS:GO":"来自CS:GO的撬棍","Plasma Spark Tower":"等离子火花塔",
-                "Spark Lence":"神光棒","Reverse Cursed Technique Manual":"反转术士手册","The Formula Weapon Set":"公式武器套",
+                "Spark Lence":"神光棒","Reverse Cursed Technique Manual":"反转术式手册","The Formula Weapon Set":"公式武器套",
                 "Executioner's Sword":"处刑者之剑",
                 // Black
                 "GOD IS LOVE YOU":"GOD IS LOVE YOU"
