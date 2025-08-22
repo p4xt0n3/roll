@@ -7,7 +7,14 @@ const gameData = {
             "Ethereal Frost Ore", "Universal Bestiary", "Tier I Spirit Ring Embryo", "Celestial Feather Charm",
             "Book of Aqua", "Tier I Spiritual Bow Embryo", "Tier I Alchemy Catalyst", "Blessed Herb Root",
             "Ancient Rune Tablet", "Phantom Amber Shard", "Tier I Magical Shield Embryo", "Book of Terra",
-            "Runic Translation Key"
+            "Runic Translation Key",
+            // Newly requested Blue tier items
+            "Tier I Spirit Orb Embryo", "Tier I Iron Spellblade Embryo", "Fragment of Mystic Ice",
+            "Whispering Shell", "Book of Zephyr", "Healing Dewdrop", "Tier I Wind Crystal",
+            "Glowing Slime Core", "Starflower Herb", "Rune-Inscribed Pebble", "Pocket Bestiary Scroll",
+            "Emberleaf Branch", "Book of Sparks", "Minor Spirit Charm", "Tier I Guardian Shield Core",
+            "Frozen Fang Shard", "Silverleaf Mushroom", "Tier I Healing Herb Kit", "Book of Emberlight",
+            "Dreamcatcher Feather"
         ],
         purple: [
             "The Mysterious Rubix", "Stand Arrow", "Book of Undead", "Bow of Salvation", "Hi-Tec-Radar",
@@ -39,6 +46,13 @@ const gameData = {
             "Wamuu's Ring", "Light Modes Manual", "Mysterious Emerald", "Second Bomb : Sheer Heart Attack",
             "Stray Cat", "The Red stone of Aja", "Steel Ball", "Revolver", "Inverted Spear of Heaven",
             "Soul Split Kantana", "Playful Cloud", "Chains of a Thousand Miles", "Inventory Curse"
+            // Newly requested Gold tier items
+            , "Ancient StellarCoin", "Advanced Spiritual Crystal", "Wings of Salvation", "Obsidian Great Sword",
+            "Energy Shard (The Strongest of Today)", "Energy Shard (The Strongest in History)",
+            "Energy Shard (The Vessel)", "Energy Shard (The Sorcerer Killer)",
+            "Energy Shard (The Alternate Scientist)", "Energy Shard (The Red Dust Prodigy)",
+            "Energy Shard (The Elemental Master)", "G Virus", "T Virus", "C Virus",
+            "T Veronica Virus", "Uroboros Virus"
         ],
         red: [
             "The Card", "Rubix of 6th Stage Seal", "The All-See Eye of 333", "Requiem Arrow", "The Perfect DNA",
@@ -54,6 +68,11 @@ const gameData = {
             // New Red-tier items requested by user:
             "Aja Mask", "The Cog of Time", "Heaven Shard", "The Light Shard of Ultra-Ancient",
             "Heavenly Restriction", "10 Shadows Technique Manual", "Heart of Africa", "Tears of Ocean"
+            // Newly requested Red tier items
+            , "Level V Authority Keycard (Cosmosphere Taskforce)", "Level V Authority Keycard (Universe Empire)",
+            "Level V Authority Keycard (Universal Club)", "Level V Authority Keycard (The Fourth Reich)",
+            "Cursed Orb", "Universal Level Black Card", "Don Quixote's Armor", "Space-Slicing Kantana",
+            "Bunny's Kantana", "Joker Hammer", "Projenitor Virus", "Solar Diary", "Bro I'm Dead"
         ],
         black: [
             "GOD IS LOVE YOU"
@@ -101,10 +120,14 @@ const gameData = {
             "The Guard Captain, Saeed Ziaten","The Creator of ReLink, Dr. Rometheus",
             "Believers of the Old Dynasty, Hamke","The Future, Jacob Haavk",
             "The Western Swordmaster, Princeton Friedrich Schafer",
-            // Added per user's request:
-            "The Freely Omni-Assassin, Clinton Hantrence Ofrento",
             // Newly added Red characters
-            "Unsatisfied Desires, Shura", "The Start of all Tales, P"
+            "Unsatisfied Desires, Shura", "The Start of all Tales, P",
+            // Translations for newly requested Red characters
+            "The Universe' Samurai, Moreal","The Fuhrer of New Era, Hanser Von H.",
+            "The #3 Sinner, Don Quixote","A Spark of Blue, Blash",
+            "The Sister of The Alternate, Genetina","Form of Ice, Floa",
+            "The Child of Miracle and Fortune, Flotina","The #1 Cultivator, YaoXuan",
+            "Leave no one Behind, G.T.I.","The Future Itself, Haavk"
         ]
     }
 };
@@ -157,6 +180,13 @@ class GachaSystem {
                 "Mysterious Emerald":"神秘绿宝石","Second Bomb : Sheer Heart Attack":"第二炸弹：枯萎穿心攻击","Stray Cat":"猫草",
                 "The Red stone of Aja":"艾哲红石","Steel Ball":"钢球","Revolver":"左轮手枪","Inverted Spear of Heaven":"天逆牟",
                 "Soul Split Kantana":"釈魂刀","Playful Cloud":"游云","Chains of a Thousand Miles":"千里之链","Inventory Curse":"丑宝",
+                // Translations for newly requested Gold items
+                "Ancient StellarCoin":"古星际币","Advanced Spiritual Crystal":"高阶灵石","Wings of Salvation":"救赎之翼",
+                "Obsidian Great Sword":"黑曜石大剑","Energy Shard (The Strongest of Today)":"能量碎片（现代最强）",
+                "Energy Shard (The Strongest in History)":"能量碎片（古代最强）","Energy Shard (The Vessel)":"能量碎片（宿挪容器）",
+                "Energy Shard (The Sorcerer Killer)":"能量碎片（咒术师杀手）","Energy Shard (The Alternate Scientist)":"能量碎片（伪人科学家）",
+                "Energy Shard (The Red Dust Prodigy)":"能量碎片（血尘天骄）","Energy Shard (The Elemental Master)":"能量碎片（元素大师）",
+                "G Virus":"G病毒","T Virus":"T病毒","C Virus":"C病毒","T Veronica Virus":"T维罗妮卡病毒","Uroboros Virus":"衔尾蛇病毒",
                 // Red tier
                 "The Card":"卡牌","Rubix of 6th Stage Seal":"六阶封印魔方","The All-See Eye of 333":"333全知全能之眼",
                 "Requiem Arrow":"镇魂曲之箭","The Perfect DNA":"完美基因","The Manual of ⭕💴":"⭕💴手册",
@@ -172,8 +202,16 @@ class GachaSystem {
                 "DIO's Bone":"DIO的骨头","Crowbar from CS:GO":"来自CS:GO的撬棍","Plasma Spark Tower":"等离子火花塔",
                 "Spark Lence":"神光棒","Reverse Cursed Technique Manual":"反转术士手册","The Formula Weapon Set":"公式武器套",
                 "Executioner's Sword":"处刑者之剑",
+                // New Red tier items translations
+                "Level V Authority Keycard (Cosmosphere Taskforce)":"V级权限卡（宇宙特勤小组）",
+                "Level V Authority Keycard (Universe Empire)":"V级权限卡（宇宙帝国）",
+                "Level V Authority Keycard (Universal Club)":"V级权限卡（宇宙协会）",
+                "Level V Authority Keycard (The Fourth Reich)":"V级权限卡（第四帝国）",
+                "Cursed Orb":"诅咒圆珠","Universal Level Black Card":"宇宙级黑卡","Don Quixote's Armor":"堂吉诃德的盔甲",
+                "Space-Slicing Kantana":"空裂武士刀","Bunny's Kantana":"小兔子的武士刀","Joker Hammer":"小丑大锤",
+                "Projenitor Virus":"始祖病毒","Solar Diary":"耀日日记","Bro I'm Dead":"不是兄弟我怎么④了"
                 // Black
-                "GOD IS LOVE YOU":"GOD IS LOVE YOU"
+                ,"GOD IS LOVE YOU":"GOD IS LOVE YOU"
             },
             characters: {
                 // Purple
@@ -223,6 +261,12 @@ class GachaSystem {
                 "The Start of all Tales, P":"整个故事的起点，P",
                 // Newly added Red character translation
                 "The Freely Omni-Assassin, Clinton Hantrence Ofrento":"自由的全能刺客，克林顿 · 汉特伦斯 · 奥弗伦多"
+                // Translations for newly requested Red characters
+                ,"The Universe' Samurai, Moreal":"宇宙武士，莫莉尔","The Fuhrer of New Era, Hanser Von H.":"新时代的元首，汉瑟 · 冯 · H.",
+                "The #3 Sinner, Don Quixote":"第三位罪人，堂吉诃德","A Spark of Blue, Blash":"一抹蓝光，蓝闪",
+                "The Sister of The Alternate, Genetina":"伪人之妹，杰妮缇娜","Form of Ice, Floa":"寒冰化身，芙洛亚",
+                "The Child of Miracle and Fortune, Flotina":"奇迹与气运之女，芙洛缇娜","The #1 Cultivator, YaoXuan":"第一修仙者，曜玄",
+                "Leave no one Behind, G.T.I.":"不会抛下任何人，全球应急行动小组","The Future Itself, Haavk":"未来化身，哈夫克"
             }
         };
         
@@ -1229,7 +1273,14 @@ class GachaSystem {
                 dest.textContent = 'No items yet.';
                 return;
             }
-            keys.sort().reverse().forEach(name => {
+            // sort by rarity (black, red, gold, purple, blue) then alphabetically
+            const rarityOrder = { black: 0, red: 1, gold: 2, purple: 3, blue: 4 };
+            keys.sort((a, b) => {
+                const ra = rarityOrder[this.getItemRarity(a) || 'blue'];
+                const rb = rarityOrder[this.getItemRarity(b) || 'blue'];
+                if (ra !== rb) return ra - rb;
+                return a.localeCompare(b);
+            }).forEach(name => {
                 const entry = this.itemInventory[name];
                 const count = entry.count;
                 const rarity = entry.rarity || 'blue';
@@ -1662,6 +1713,13 @@ class GachaSystem {
                 this.appendCmdLine('Playing rockstare...');
                 this.showRockStare();
                 break;
+            case '/resetcd': {
+                // Reset Random StellarCoin cooldown (clears stored last-timestamp)
+                localStorage.removeItem('ttou_randomcoin_last');
+                this.updateRandomCoinButton();
+                this.appendCmdLine('Random StellarCoin cooldown has been reset.');
+                break;
+            }
             default:
                 this.appendCmdLine('Unknown command. Type /help for a list of commands.');
         }
