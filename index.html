@@ -189,6 +189,9 @@
                         <button class="debug-apply" id="giveAllBtn">GiveAll</button>
                         <button class="debug-reset" id="dataReset">Data Reset</button>
                         <button class="debug-apply" id="applyRates">Apply Changes</button>
+                        <!-- Added AlwaysWin & NoCoinCD toggles -->
+                        <button id="alwaysWinBtn" class="debug-apply" style="background:rgba(255,255,255,0.03);">AlwaysWin: Off</button>
+                        <button id="noCoinCdBtn" class="debug-reset" style="background:rgba(255,255,255,0.03);">NoCoinCD: Off</button>
                     </div>
                 </div>
             </div>
@@ -401,6 +404,8 @@
                 <button class="gallery-btn right-btn" id="autoRollBtn" style="margin-top:0.6rem;background:rgba(255,255,255,0.03);">Auto Roll: Off</button>
                 <button class="gallery-btn right-btn" id="settingsBtn" style="margin-top:0.6rem;background:rgba(255,255,255,0.03);">Settings</button>
                 <button class="gallery-btn right-btn" id="skipAnimBtn" style="margin-top:0.6rem;background:rgba(255,255,255,0.03);">Skip Animation: Off</button>
+                <button class="gallery-btn right-btn" id="gambleBtn" style="margin-top:0.6rem;background:rgba(255,255,255,0.03);">Gamble</button>
+                <button class="gallery-btn right-btn" id="randomCoinBtn" style="margin-top:0.6rem;background:rgba(255,255,255,0.03);">Random StellarCoin</button>
             </div>
         </div>
     </div>
@@ -494,6 +499,26 @@
                 <div style="display:flex;justify-content:flex-end;margin-top:1rem;">
                     <button id="resetSettingsBtn" class="debug-reset reset-settings" style="width:140px;">Reset</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gamble Modal -->
+    <div class="password-modal" id="gambleModal" style="display:none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content" style="max-width:520px;">
+            <div class="modal-header">
+                <h3>Gamble</h3>
+                <button class="modal-close" id="closeGambleModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color:var(--text-secondary);margin-bottom:0.5rem;">Enter amount of StellarCoin to gamble (will be multiplied by a random 1–6). 50% chance to win or lose.</p>
+                <input id="gambleAmountInput" placeholder="Amount (e.g. 100)" style="width:100%;background:var(--bg-tertiary);border:1px solid var(--border-primary);color:var(--text-primary);padding:0.75rem;border-radius:8px;margin-bottom:0.6rem;">
+                <div style="display:flex;gap:0.5rem;">
+                    <button class="password-submit" id="gambleExecuteBtn" style="flex:1;">Gamble</button>
+                    <button class="debug-reset" id="gambleCancelBtn" style="flex:1;">Cancel</button>
+                </div>
+                <div id="gambleMsg" style="margin-top:0.75rem;color:var(--text-secondary);min-height:1.2rem;"></div>
             </div>
         </div>
     </div>

@@ -234,7 +234,11 @@ class GachaSystem {
         this.skipAnimation = false; // NEW: Skip animation default OFF
         this.autoRoll = false; // NEW: Auto Roll default OFF
         this._autoRollInterval = null; // NEW: Auto Roll default OFF
-        
+
+        // NEW Debug toggles
+        this.alwaysWin = false; // if true, gamble always wins
+        this.noCoinCD = false;  // if true, Random StellarCoin has no cooldown
+
         // Inventories
         this.characterInventory = []; // stores character names
         // map itemName -> { count: number, rarity: 'blue'|'purple'|'gold'|'red' }
@@ -353,6 +357,14 @@ class GachaSystem {
                 autoBtn.textContent = `Auto Clear: ${this.autoClear ? 'On' : 'Off'}`;
                 autoBtn.style.background = this.autoClear ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.03)';
             });
+        }
+        
+        // Random StellarCoin button (100 - 100000) with 10 minute cooldown
+        const randomBtn = document.getElementById('randomCoinBtn');
+        if (randomBtn) {
+            randomBtn.addEventListener('click', () => this.handleRandomStellarClick());
+            // ensure initial state
+            this.updateRandomCoinButton();
         }
         
         // Auto Roll toggle
@@ -576,6 +588,23 @@ class GachaSystem {
                 if (confirm('Do you want to Reset your settings?')) this.resetSettings();
             });
         }
+        
+        // Gamble button -> open modal
+        const gambleBtn = document.getElementById('gambleBtn');
+        if (gambleBtn) {
+            gambleBtn.addEventListener('click', () => {
+                document.getElementById('gambleModal').style.display = 'flex';
+                document.getElementById('gambleAmountInput').value = '';
+                document.getElementById('gambleMsg').textContent = '';
+                setTimeout(()=>document.getElementById('gambleAmountInput').focus(),100);
+            });
+        }
+        // Gamble modal close/cancel
+        document.getElementById('closeGambleModal').addEventListener('click', ()=> document.getElementById('gambleModal').style.display='none');
+        document.getElementById('gambleCancelBtn').addEventListener('click', ()=> document.getElementById('gambleModal').style.display='none');
+        // Execute gamble action
+        document.getElementById('gambleExecuteBtn').addEventListener('click', () => { this.executeGamble(); });
+        document.getElementById('gambleAmountInput').addEventListener('keypress', (e)=> { if (e.key==='Enter') this.executeGamble(); });
     }
     
     setupDebugSystem() {
@@ -723,6 +752,25 @@ class GachaSystem {
                 this.updateCraftListCounts();
                 if (document.getElementById('inventoryModal').style.display === 'flex') this.showInventory('items');
                 this.appendCmdLine('GiveAll: All items & characters added, +10000 StellarCoin.');
+            });
+        }
+
+        // AlwaysWin toggle button (debug)
+        const alwaysBtn = document.getElementById('alwaysWinBtn');
+        if (alwaysBtn) {
+            alwaysBtn.addEventListener('click', () => {
+                this.alwaysWin = !this.alwaysWin;
+                alwaysBtn.textContent = `AlwaysWin: ${this.alwaysWin ? 'On' : 'Off'}`;
+                alwaysBtn.style.background = this.alwaysWin ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.03)';
+            });
+        }
+        // NoCoinCD toggle button (debug)
+        const noCdBtn = document.getElementById('noCoinCdBtn');
+        if (noCdBtn) {
+            noCdBtn.addEventListener('click', () => {
+                this.noCoinCD = !this.noCoinCD;
+                noCdBtn.textContent = `NoCoinCD: ${this.noCoinCD ? 'On' : 'Off'}`;
+                noCdBtn.style.background = this.noCoinCD ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.03)';
             });
         }
 
@@ -1753,7 +1801,75 @@ class GachaSystem {
         });
     }
 
-    // New helpers for added commands
+    // New helpers for Random StellarCoin cooldown & handling
+    handleRandomStellarClick() {
+        // If NoCoinCD debug toggle is enabled, bypass cooldown entirely
+        if (this.noCoinCD) {
+            const amount = Math.floor(Math.random() * (100000 - 100 + 1)) + 100;
+            this.stellarCoin += amount;
+            this.updateStellarCoinDisplay();
+            this.showSaveToast(`Received ${amount} ⭐ (NoCoinCD)`, 1200);
+            return;
+        }
+        const KEY = 'ttou_randomcoin_last';
+        const cooldownMs = 10 * 60 * 1000; // 10 minutes
+        const now = Date.now();
+        const last = parseInt(localStorage.getItem(KEY) || '0', 10);
+        const remain = last > 0 ? Math.max(0, (last + cooldownMs) - now) : 0;
+        if (remain > 0) {
+            const s = Math.ceil(remain / 1000);
+            alert(`Button cooling down. Try again in ${s} second(s).`);
+            return;
+        }
+        // award random amount
+        const amount = Math.floor(Math.random() * (100000 - 100 + 1)) + 100;
+        this.stellarCoin += amount;
+        this.updateStellarCoinDisplay();
+        localStorage.setItem(KEY, String(now));
+        this.updateRandomCoinButton();
+        // brief feedback
+        this.showSaveToast(`Received ${amount} ⭐`, 1200);
+    }
+
+    updateRandomCoinButton() {
+        const btn = document.getElementById('randomCoinBtn');
+        if (!btn) return;
+        const KEY = 'ttou_randomcoin_last';
+        const cooldownMs = 10 * 60 * 1000;
+        const last = parseInt(localStorage.getItem(KEY) || '0', 10);
+        const now = Date.now();
+        const remain = last > 0 ? Math.max(0, (last + cooldownMs) - now) : 0;
+        if (remain <= 0) {
+            btn.disabled = false;
+            btn.textContent = this.language === 'zh' ? '随机星币' : 'Random StellarCoin';
+            btn.style.opacity = '1';
+        } else {
+            btn.disabled = true;
+            const mins = Math.floor(remain / 60000);
+            const secs = Math.floor((remain % 60000) / 1000);
+            btn.textContent = this.language === 'zh' ? `冷却：${mins}m ${secs}s` : `Cooldown: ${mins}m ${secs}s`;
+            btn.style.opacity = '0.7';
+            // refresh countdown each second
+            if (this._randomCoinTimer) clearInterval(this._randomCoinTimer);
+            this._randomCoinTimer = setInterval(() => {
+                const now2 = Date.now();
+                const remain2 = Math.max(0, (last + cooldownMs) - now2);
+                if (remain2 <= 0) {
+                    clearInterval(this._randomCoinTimer);
+                    this._randomCoinTimer = null;
+                    this.updateRandomCoinButton();
+                } else {
+                    const m = Math.floor(remain2 / 60000);
+                    const s = Math.floor((remain2 % 60000) / 1000);
+                    const label = this.language === 'zh' ? `冷却：${m}m ${s}s` : `Cooldown: ${m}m ${s}s`;
+                    const b = document.getElementById('randomCoinBtn');
+                    if (b) b.textContent = label;
+                }
+            }, 1000);
+        }
+    }
+
+    // pagespinEffect
     pagespinEffect(speedDegPerSec = 360, durationSec = 2) {
         // apply smooth rotation then reset
         const root = document.documentElement;
@@ -1973,7 +2089,39 @@ class GachaSystem {
         this.updateStellarCoinDisplay();
     }
 
-    // Save to localStorage from modal
+    // Gamble execution: reads amount, rolls multiplier 1-6, 50% chance to Win and 50% chance to Lose
+    executeGamble() {
+        const inp = document.getElementById('gambleAmountInput');
+        const msg = document.getElementById('gambleMsg');
+        if (!inp || !msg) return;
+        let amt = parseInt(inp.value, 10);
+        if (Number.isNaN(amt) || amt <= 0) { msg.style.color = '#fca5a5'; msg.textContent = 'Enter a valid positive amount.'; return; }
+        // If user doesn't have enough and easyMode off, prevent gambling more than they own
+        if (!this.easyMode && amt > this.stellarCoin) {
+            msg.style.color = '#fca5a5';
+            msg.textContent = `You don't have enough StellarCoin. You have ${this.stellarCoin} ⭐.`;
+            return;
+        }
+        // pick multiplier 1..6
+        const mult = Math.floor(Math.random() * 6) + 1;
+        const result = amt * mult;
+        // If AlwaysWin debug toggle is active, override random and always win
+        const win = this.alwaysWin ? true : (Math.random() < 0.5);
+        if (win) {
+            this.stellarCoin += result;
+            msg.style.color = '#9ae6b4';
+            msg.textContent = `WIN! Multiplier: ×${mult}. You gained ${result} ⭐ (new total: ${this.stellarCoin} ⭐).`;
+        } else {
+            this.stellarCoin -= result;
+            msg.style.color = '#fca5a5';
+            msg.textContent = `LOSE! Multiplier: ×${mult}. You lost ${result} ⭐ (new total: ${this.stellarCoin} ⭐).`;
+        }
+        this.updateStellarCoinDisplay();
+        // brief auto-close after 2.5s
+        setTimeout(()=> { try { document.getElementById('gambleModal').style.display='none'; } catch(e){} }, 2500);
+    }
+
+    // Show Sell Modal
     showSellModal() {
         document.getElementById('sellModal').style.display = 'flex';
         this.sellQueue = {};
