@@ -33,7 +33,12 @@ const gameData = {
             // newly added by user:
             "Pretty Hand", "Mysterious DISC", "The Sword of Quadratic Equation", "The Fist of E=MC2",
             "The Dagger of 1/2*r*θ", "Kishibe Rohan's Original Manuscript", "DIO's Diary", "Ultraseven's Head Axe",
-            "Luck & Pluck", "Caesar's Headband", "Immortal Ascension Fruit"
+            "Luck & Pluck", "Caesar's Headband", "Immortal Ascension Fruit",
+            // New Gold-tier items requested by user:
+            "Lava Rock", "The Stone Mask", "Stone Free's String", "Sticker", "Joseph Joestar's Clacker Volley",
+            "Wamuu's Ring", "Light Modes Manual", "Mysterious Emerald", "Second Bomb : Sheer Heart Attack",
+            "Stray Cat", "The Red stone of Aja", "Steel Ball", "Revolver", "Inverted Spear of Heaven",
+            "Soul Split Kantana", "Playful Cloud", "Chains of a Thousand Miles", "Inventory Curse"
         ],
         red: [
             "The Card", "Rubix of 6th Stage Seal", "The All-See Eye of 333", "Requiem Arrow", "The Perfect DNA",
@@ -45,7 +50,10 @@ const gameData = {
             "The Bible", "The Tale of The Old Universe",
             // newly added by user:
             "DIO's Bone", "Crowbar from CS:GO", "Plasma Spark Tower", "Spark Lence",
-            "Reverse Cursed Technique Manual", "The Formula Weapon Set", "Executioner's Sword"
+            "Reverse Cursed Technique Manual", "The Formula Weapon Set", "Executioner's Sword",
+            // New Red-tier items requested by user:
+            "Aja Mask", "The Cog of Time", "Heaven Shard", "The Light Shard of Ultra-Ancient",
+            "Heavenly Restriction", "10 Shadows Technique Manual", "Heart of Africa", "Tears of Ocean"
         ],
         black: [
             "GOD IS LOVE YOU"
@@ -62,7 +70,14 @@ const gameData = {
             "Rister", "Shadow", "QingXuan", "Chiya Harano", "Trasy", "Joseph", "Cirys", "Deep Abyss",
             "Reinforced", "Wood", "The Mysterio", "Hyper", "Misma", "Collision",
             // newly added by user:
-            "Moriarty Zecto Crescent", "Asagi Mutsuki", "Z", "Gojo Satoru", "Ryomen Sukuna", "Yuji Itadori", "Juan🐎"
+            "Moriarty Zecto Crescent", "Asagi Mutsuki", "Z", "Gojo Satoru", "Ryomen Sukuna", "Yuji Itadori", "Juan🐎",
+            // New Gold characters requested:
+            "Toji Fushiguro", "Megumi Fushiguro", "Anais Desmoulins", "Khalil Reis", "Saeed Ziaten",
+            "Dr. Rometheus", "Hamke", "Jacob Haavk", "Princeton Friedrich Schafer",
+            // Added per user's request:
+            "Clinton Hantrence Ofrento",
+            // Newly added Gold character
+            "Shura"
         ],
         red: [
             "The Perfect Alternate, G", "Elemental Unleashed, Paxton", "The Red Dust Prodigy, Nathan",
@@ -73,13 +88,23 @@ const gameData = {
             "Spiritual Devastation, QingXuan", "Fallen Cherry Blossoms, Chiya Harano",
             "The Hope & Love, Trasy", "The Greatest Joker, Joseph", "Holyght Released, Cirys",
             "Unseen Lethal Danger, Deep Abyss", "The Invincible Defence, Reinforced",
-            "Cosmical Colossal Woodcrawler, Wood", "The First Alternate, The Mysterio",
-            "The Deep Horror Within, Hyper", "The Last Planner, Misma", "Know Everything Exist, Collision",
+            "Cosmical Colossal Woodcrawler, Wood","The First Alternate, The Mysterio",
+            "The Deep Horror Within, Hyper","The Last Planner, Misma","Know Everything Exist, Collision",
             // newly added by user:
-            "The Genius of Crescent Family, Moriarty Zecto Crescent", "Chief of Staff, Asagi Mutsuki",
-            "The One who stays outside Universe, Z", "The Strongest of Today, Gojo Satoru",
-            "The Strongest in History, Ryomen Sukuna", "The one who use Black Flash as m1, Yuji Itadori",
-            "The Horse on Balcony, Juan🐎"
+            "The Genius of Crescent Family, Moriarty Zecto Crescent","Chief of Staff, Asagi Mutsuki",
+            "The One who stays outside Universe, Z","The Strongest of Today, Gojo Satoru",
+            "The Strongest in History, Ryomen Sukuna","The one who use Black Flash as m1, Yuji Itadori",
+            "The Horse on Balcony, Juan🐎",
+            // New Red characters requested:
+            "The Sorcerer Killer, Toji Fushiguro","The Ten Shadows Technique User, Megumi Fushiguro",
+            "The Security Director, Anais Desmoulins","Abyss Shark, Khalil Reis",
+            "The Guard Captain, Saeed Ziaten","The Creator of ReLink, Dr. Rometheus",
+            "Believers of the Old Dynasty, Hamke","The Future, Jacob Haavk",
+            "The Western Swordmaster, Princeton Friedrich Schafer",
+            // Added per user's request:
+            "The Freely Omni-Assassin, Clinton Hantrence Ofrento",
+            // Newly added Red characters
+            "Unsatisfied Desires, Shura", "The Start of all Tales, P"
         ]
     }
 };
@@ -126,6 +151,12 @@ class GachaSystem {
                 "The Fist of E=MC2":"E=MC2之拳","The Dagger of 1/2*r*θ":"1/2*r*θ小刀","Kishibe Rohan's Original Manuscript":"岸边露伴的漫画原稿",
                 "DIO's Diary":"DIO的日记","Ultraseven's Head Axe":"七爷的头镖","Luck & Pluck":"幸运&勇气之剑",
                 "Caesar's Headband":"西撒的头巾","Immortal Ascension Fruit":"升仙果",
+                // Added translations for new Gold items
+                "Lava Rock":"熔岩","The Stone Mask":"石鬼面","Stone Free's String":"石之自由的线","Sticker":"贴纸",
+                "Joseph Joestar's Clacker Volley":"乔瑟夫 · 乔斯达的铁球","Wamuu's Ring":"瓦姆乌的唇环","Light Modes Manual":"光之流法手册",
+                "Mysterious Emerald":"神秘绿宝石","Second Bomb : Sheer Heart Attack":"第二炸弹：枯萎穿心攻击","Stray Cat":"猫草",
+                "The Red stone of Aja":"艾哲红石","Steel Ball":"钢球","Revolver":"左轮手枪","Inverted Spear of Heaven":"天逆牟",
+                "Soul Split Kantana":"釈魂刀","Playful Cloud":"游云","Chains of a Thousand Miles":"千里之链","Inventory Curse":"丑宝",
                 // Red tier
                 "The Card":"卡牌","Rubix of 6th Stage Seal":"六阶封印魔方","The All-See Eye of 333":"333全知全能之眼",
                 "Requiem Arrow":"镇魂曲之箭","The Perfect DNA":"完美基因","The Manual of ⭕💴":"⭕💴手册",
@@ -133,6 +164,10 @@ class GachaSystem {
                 "Sukuna's Finger":"宿傩之指","Six Eyes":"六眼","The Bones of 87":"87的骨","New Rokakaka Fruit":"新洛卡卡卡果实",
                 "Umbra":"本影","Original Blacksite":"初源黑网","Calamity's Flow in a Bottle":"瓶中灾厄洪流","The Whole Corpse of the Saint":"圣人遗体",
                 "The Bible":"圣经","The Tale of The Old Universe":"旧宇宙物语",
+                // Added translations for new Red items
+                "Aja Mask":"艾哲红石面具","The Cog of Time":"时间齿轮","Heaven Shard":"天堂碎片",
+                "The Light Shard of Ultra-Ancient":"超古代之光碎片","Heavenly Restriction":"天与咒缚",
+                "10 Shadows Technique Manual":"十影术手册","Heart of Africa":"非洲之心","Tears of Ocean":"海洋之泪",
                 // newly added Red items translations
                 "DIO's Bone":"DIO的骨头","Crowbar from CS:GO":"来自CS:GO的撬棍","Plasma Spark Tower":"等离子火花塔",
                 "Spark Lence":"神光棒","Reverse Cursed Technique Manual":"反转术士手册","The Formula Weapon Set":"公式武器套",
@@ -154,6 +189,14 @@ class GachaSystem {
                 // newly added Gold characters translations
                 "Moriarty Zecto Crescent":"莫里亚蒂 · 泽克托 · 克里森特","Asagi Mutsuki":"浅黄睦月","Z":"Z","Gojo Satoru":"五条悟",
                 "Ryomen Sukuna":"两面宿挪","Yuji Itadori":"虎杖悠仁","Juan🐎":"Juan🐎",
+                // Added translations for newly requested Gold characters
+                "Toji Fushiguro":"伏黑甚尔","Megumi Fushiguro":"伏黑惠","Anais Desmoulins":"阿娜伊斯 · 德穆兰",
+                "Khalil Reis":"哈利勒 · 雷斯","Saeed Ziaten":"赛伊德 · 齐亚腾","Dr. Rometheus":"罗米修斯博士",
+                "Hamke":"哈姆克","Jacob Haavk":"雅各布 · 哈夫克","Princeton Friedrich Schafer":"普林斯顿 · 费德里希 · 谢佛",
+                // Newly added Gold character translation
+                "Clinton Hantrence Ofrento":"克林顿 · 汉特伦斯 · 奥弗伦多",
+                // New Gold character translation: Shura
+                "Shura":"Shura",
                 // Red (selected examples)
                 "The Perfect Alternate, G":"最完美的伪人，G","Elemental Unleashed, Paxton":"元素释放，帕克斯顿",
                 "The Red Dust Prodigy, Nathan":"血尘天骄，内森","Cuber Requiem, Kasi":"方者镇魂曲，卡西","The Emperor Awakes, Karos":"皇者觉醒，卡洛斯",
@@ -168,7 +211,18 @@ class GachaSystem {
                 "The Genius of Crescent Family, Moriarty Zecto Crescent":"克里森特家族天才，莫里亚蒂 · 泽克托 · 克里森特",
                 "Chief of Staff, Asagi Mutsuki":"参谋长，浅黄睦月","The One who stays outside Universe, Z":"宇宙之外的人，Z",
                 "The Strongest of Today, Gojo Satoru":"现代最强，五条悟","The Strongest in History, Ryomen Sukuna":"古代最强，两面宿挪",
-                "The one who use Black Flash as m1, Yuji Itadori":"把黑闪当普攻，虎杖悠仁","The Horse on Balcony, Juan🐎":"阳台上的马，Juan🐎"
+                "The one who use Black Flash as m1, Yuji Itadori":"把黑闪当普攻，虎杖悠仁","The Horse on Balcony, Juan🐎":"阳台上的马，Juan🐎",
+                // Added translations for newly requested Red characters
+                "The Sorcerer Killer, Toji Fushiguro":"伏黑甚尔","The Ten Shadows Technique User, Megumi Fushiguro":"十影术使用者，伏黑惠",
+                "The Security Director, Anais Desmoulins":"安全总监，阿娜伊斯 · 德穆兰","Abyss Shark, Khalil Reis":"地狱黑鲨，哈利勒 ·雷斯",
+                "The Guard Captain, Saeed Ziaten":"卫队长官，赛伊德 · 齐亚腾","The Creator of ReLink, Dr. Rometheus":"Relink脑机研发者，罗米修斯博士",
+                "Believers of the Old Dynasty, Hamke":"旧朝的信仰者，哈姆克","The Future, Jacob Haavk":"\"我们，才是未来\"，雅各布 · 哈夫克",
+                "The Western Swordmaster, Princeton Friedrich Schafer":"西洋剑大师，普林斯顿 · 费德里希 · 谢佛",
+                // Newly added Red character translation entries:
+                "Unsatisfied Desires, Shura":"无法满足欲望的女仆，Shura",
+                "The Start of all Tales, P":"整个故事的起点，P",
+                // Newly added Red character translation
+                "The Freely Omni-Assassin, Clinton Hantrence Ofrento":"自由的全能刺客，克林顿 · 汉特伦斯 · 奥弗伦多"
             }
         };
         
@@ -653,6 +707,25 @@ class GachaSystem {
             debugModal.style.display = 'none';
         });
 
+        // GiveAll button - grant everything (items + characters) and StellarCoin
+        const giveAllBtn = document.getElementById('giveAllBtn');
+        if (giveAllBtn) {
+            giveAllBtn.addEventListener('click', () => {
+                // grant every item once (keeping rarity) and every character once
+                Object.entries(gameData.items).forEach(([rarity, list]) => {
+                    list.forEach(name => this.incItem(name, 1, rarity));
+                });
+                Object.values(gameData.characters).flat().forEach(name => this.characterInventory.push(name));
+                // give some StellarCoin as bonus
+                this.stellarCoin += 10000;
+                this.updateStellarCoinDisplay();
+                // refresh craft counts and inventory UI if open
+                this.updateCraftListCounts();
+                if (document.getElementById('inventoryModal').style.display === 'flex') this.showInventory('items');
+                this.appendCmdLine('GiveAll: All items & characters added, +10000 StellarCoin.');
+            });
+        }
+
         // Save to localStorage from modal
         document.getElementById('saveToLocal').addEventListener('click', () => {
             const json = document.getElementById('saveTextarea').value;
@@ -1071,11 +1144,31 @@ class GachaSystem {
                 dest.textContent = 'No characters yet.';
                 return;
             }
+            // show character name with its color tier (rarity) class
             this.characterInventory.slice().reverse().forEach(name => {
                 const el = document.createElement('div');
+                el.className = 'inv-char';
+                el.style.display = 'flex';
+                el.style.justifyContent = 'space-between';
+                el.style.alignItems = 'center';
                 el.style.padding = '0.5rem 0';
                 el.style.borderBottom = '1px solid var(--border-primary)';
-                el.textContent = this.translateName(name);
+                const rarity = this.getCharacterRarity(name);
+                el.classList.add(`rarity-${rarity}`);
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'inv-char-name';
+                nameDiv.textContent = this.translateName(name);
+                const badge = document.createElement('div');
+                badge.className = 'inv-char-badge';
+                badge.textContent = rarity.toUpperCase();
+                badge.style.opacity = '0.8';
+                badge.style.fontSize = '0.85rem';
+                badge.style.fontWeight = '700';
+                badge.style.padding = '0.15rem 0.5rem';
+                badge.style.borderRadius = '6px';
+                badge.style.background = 'rgba(255,255,255,0.03)';
+                el.appendChild(nameDiv);
+                el.appendChild(badge);
                 dest.appendChild(el);
             });
             document.getElementById('invCharsBtn').classList.add('debug-apply');
@@ -1452,13 +1545,18 @@ class GachaSystem {
                 break;
             }
             case '/giveall':
-                // give every item once and all characters once
-                Object.values(gameData.items).flat().forEach(name => this.incItem(name, 1, this.inferRarityFromList(name)));
+                // give every item once (keeping rarity) and every character once
+                Object.entries(gameData.items).forEach(([rarity, list]) => {
+                    list.forEach(name => this.incItem(name, 1, rarity));
+                });
                 Object.values(gameData.characters).flat().forEach(name => this.characterInventory.push(name));
-                this.stellarCoin += 10000; // Give some StellarCoin too
+                // give some StellarCoin as bonus
+                this.stellarCoin += 10000;
                 this.updateStellarCoinDisplay();
-                this.appendCmdLine('All items, characters, and 10000 StellarCoin have been added.');
+                // refresh craft counts and inventory UI if open
                 this.updateCraftListCounts();
+                if (document.getElementById('inventoryModal').style.display === 'flex') this.showInventory('items');
+                this.appendCmdLine('GiveAll: All items & characters added, +10000 StellarCoin.');
                 break;
             case '/clearall':
                 this.characterInventory = [];
@@ -1817,6 +1915,15 @@ class GachaSystem {
         document.body.appendChild(wrap);
         requestAnimationFrame(()=> { left.style.transition='opacity .25s'; right.style.transition='opacity .25s'; left.style.opacity='1'; right.style.opacity='1';});
         setTimeout(()=>{ left.style.opacity='0'; right.style.opacity='0'; setTimeout(()=>wrap.remove(),400); }, 2500);
+    }
+
+    // determine character rarity by searching character lists (purple/gold/red). default 'purple' if not found
+    getCharacterRarity(name) {
+        if (!name) return 'purple';
+        if (gameData.characters.red && gameData.characters.red.includes(name)) return 'red';
+        if (gameData.characters.gold && gameData.characters.gold.includes(name)) return 'gold';
+        if (gameData.characters.purple && gameData.characters.purple.includes(name)) return 'purple';
+        return 'purple';
     }
 
     // Apply theme (dark/light) and persist

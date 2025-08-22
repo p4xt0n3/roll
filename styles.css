@@ -961,6 +961,19 @@ body {
 .inv-item.rarity-gold .inv-name { color: #f59e0b; }
 .inv-item.rarity-red .inv-name { color: #ef4444; }
 
+/* Inventory characters styling */
+.inv-char { display:flex; gap:0.75rem; align-items:center; justify-content:space-between; }
+.inv-char .inv-char-name { font-weight:700; }
+.inv-char.rarity-blue .inv-char-name { color: #4a90ff; }
+.inv-char.rarity-purple .inv-char-name { color: #a855f7; }
+.inv-char.rarity-gold .inv-char-name { color: #f59e0b; }
+.inv-char.rarity-red .inv-char-name { color: #ef4444; }
+/* subtle badge color adjustments to match rarity */
+.inv-char.rarity-blue .inv-char-badge { background: rgba(74,144,255,0.08); color: #4a90ff; border: 1px solid rgba(74,144,255,0.12); }
+.inv-char.rarity-purple .inv-char-badge { background: rgba(168,85,247,0.08); color: #a855f7; border: 1px solid rgba(168,85,247,0.12); }
+.inv-char.rarity-gold .inv-char-badge { background: rgba(245,158,11,0.08); color: #f59e0b; border: 1px solid rgba(245,158,11,0.12); }
+.inv-char.rarity-red .inv-char-badge { background: rgba(239,68,68,0.08); color: #ef4444; border: 1px solid rgba(239,68,68,0.12); }
+
 /* special overlay for GOD IS LOVE YOU sequence */
 .god-overlay {
     position: fixed;
