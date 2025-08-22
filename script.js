@@ -135,7 +135,7 @@ class GachaSystem {
                 "The Bible":"圣经","The Tale of The Old Universe":"旧宇宙物语",
                 // newly added Red items translations
                 "DIO's Bone":"DIO的骨头","Crowbar from CS:GO":"来自CS:GO的撬棍","Plasma Spark Tower":"等离子火花塔",
-                "Spark Lence":"神光棒","Reverse Cursed Technique Manual":"反转术式手册","The Formula Weapon Set":"公式武器套",
+                "Spark Lence":"神光棒","Reverse Cursed Technique Manual":"反转术士手册","The Formula Weapon Set":"公式武器套",
                 "Executioner's Sword":"处刑者之剑",
                 // Black
                 "GOD IS LOVE YOU":"GOD IS LOVE YOU"
@@ -178,6 +178,8 @@ class GachaSystem {
         this.easyMode = false; // NEW: Easy Mode default OFF
         this.autoClear = true; // NEW: Auto Clear default ON
         this.skipAnimation = false; // NEW: Skip animation default OFF
+        this.autoRoll = false; // NEW: Auto Roll default OFF
+        this._autoRollInterval = null; // NEW: Auto Roll default OFF
         
         // Inventories
         this.characterInventory = []; // stores character names
@@ -296,6 +298,18 @@ class GachaSystem {
                 this.autoClear = !this.autoClear;
                 autoBtn.textContent = `Auto Clear: ${this.autoClear ? 'On' : 'Off'}`;
                 autoBtn.style.background = this.autoClear ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.03)';
+            });
+        }
+        
+        // Auto Roll toggle
+        const autoRollBtn = document.getElementById('autoRollBtn');
+        if (autoRollBtn) {
+            autoRollBtn.textContent = `Auto Roll: ${this.autoRoll ? 'On' : 'Off'}`;
+            autoRollBtn.addEventListener('click', () => {
+                this.autoRoll = !this.autoRoll;
+                autoRollBtn.textContent = `Auto Roll: ${this.autoRoll ? 'On' : 'Off'}`;
+                autoRollBtn.style.background = this.autoRoll ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.03)';
+                if (this.autoRoll) this.startAutoRoll(); else this.stopAutoRoll();
             });
         }
         
@@ -1369,6 +1383,10 @@ class GachaSystem {
 
         // Ensure language radio reflects current language (safe-guard if settings modal is open)
         document.querySelectorAll('input[name="ttou-lang"]').forEach(r => { r.checked = (r.value === this.language); });
+        
+        // Auto Roll button label
+        const arBtn = document.getElementById('autoRollBtn');
+        if (arBtn) arBtn.textContent = `Auto Roll: ${this.autoRoll ? (this.language === 'zh' ? '开启' : 'On') : (this.language === 'zh' ? '关闭' : 'Off')}`;
     }
 
     appendCmdLine(text) {
@@ -2139,6 +2157,29 @@ class GachaSystem {
         document.getElementById('downloadMp4Btn').disabled = true;
         document.getElementById('downloadMp3Btn').disabled = true;
         this._videoDownloadId = null;
+    }
+
+    startAutoRoll() {
+        // prevent multiple intervals
+        if (this._autoRollInterval) return;
+        // do an immediate roll and then schedule repeated 10-pulls every 3s
+        const doRoll = async () => {
+            // avoid queueing if a manual roll is in progress
+            if (this.isRolling) return;
+            const prevType = this.currentRollType;
+            this.currentRollType = 10;
+            await this.executeRoll();
+            this.currentRollType = prevType;
+        };
+        // immediate first attempt
+        doRoll();
+        this._autoRollInterval = setInterval(doRoll, 3000);
+    }
+
+    stopAutoRoll() {
+        if (!this._autoRollInterval) return;
+        clearInterval(this._autoRollInterval);
+        this._autoRollInterval = null;
     }
 }
 
