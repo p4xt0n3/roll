@@ -361,11 +361,11 @@ body {
     box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
 }
 
-.result-card.rarity-black {
-    border-color: #000000;
-    background: linear-gradient(135deg, #000000, #1a1a1a);
-    color: #fff;
-    box-shadow: 0 0 35px rgba(0,0,0,0.6), 0 0 12px rgba(255,255,255,0.03) inset;
+/* Add green rarity styling for Fixed Message Paper */
+.result-card.rarity-green {
+    border-color: #10b981;
+    background: linear-gradient(135deg, #1a4433, #2a5544);
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.2);
 }
 
 .result-card.type-character {
@@ -828,6 +828,11 @@ body {
 .sell-item.rarity-gold .sell-item-name { color: #f59e0b; }
 .sell-item.rarity-red .sell-item-name { color: #ef4444; }
 
+/* Add green rarity styling for Fixed Message Paper */
+.sell-item.rarity-green .sell-item-name { 
+    color: #10b981; 
+}
+
 .sell-item-name {
     font-weight: 600;
     flex: 1;
@@ -961,6 +966,11 @@ body {
 .inv-item.rarity-gold .inv-name { color: #f59e0b; }
 .inv-item.rarity-red .inv-name { color: #ef4444; }
 
+/* Add green rarity styling for Fixed Message Paper */
+.inv-item.rarity-green .inv-name { 
+    color: #10b981; 
+}
+
 /* Inventory characters styling */
 .inv-char { display:flex; gap:0.75rem; align-items:center; justify-content:space-between; }
 .inv-char .inv-char-name { font-weight:700; }
@@ -968,11 +978,24 @@ body {
 .inv-char.rarity-purple .inv-char-name { color: #a855f7; }
 .inv-char.rarity-gold .inv-char-name { color: #f59e0b; }
 .inv-char.rarity-red .inv-char-name { color: #ef4444; }
+
+/* Add green rarity styling for Fixed Message Paper */
+.inv-char.rarity-green .inv-char-name { 
+    color: #10b981; 
+}
+
 /* subtle badge color adjustments to match rarity */
 .inv-char.rarity-blue .inv-char-badge { background: rgba(74,144,255,0.08); color: #4a90ff; border: 1px solid rgba(74,144,255,0.12); }
 .inv-char.rarity-purple .inv-char-badge { background: rgba(168,85,247,0.08); color: #a855f7; border: 1px solid rgba(168,85,247,0.12); }
 .inv-char.rarity-gold .inv-char-badge { background: rgba(245,158,11,0.08); color: #f59e0b; border: 1px solid rgba(245,158,11,0.12); }
 .inv-char.rarity-red .inv-char-badge { background: rgba(239,68,68,0.08); color: #ef4444; border: 1px solid rgba(239,68,68,0.12); }
+
+/* Add green rarity styling for Fixed Message Paper */
+.inv-char.rarity-green .inv-char-badge { 
+    background: rgba(16,185,129,0.08); 
+    color: #10b981; 
+    border: 1px solid rgba(16,185,129,0.12); 
+}
 
 /* special overlay for GOD IS LOVE YOU sequence */
 .god-overlay {
@@ -1257,85 +1280,17 @@ body {
     box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
 }
 
-.chains-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M10,10 L90,90 M90,10 L10,90" stroke="%23444" stroke-width="3" opacity="0.7"/></svg>');
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 3;
+/* Add green rarity styling for Fixed Message Paper */
+.gallery-character.rarity-green .character-name { 
+    color: #10b981; 
 }
 
-.gallery-character.locked .chains-overlay {
-    display: block;
-}
-
-.gallery-character:not(.locked) .chains-overlay {
-    display: none;
-}
-
-/* Autosave toast (bottom-right) */
-#ttou-save-toast {
-    background: rgba(255,255,255,0.06);
-    color: #fff;
-    padding: 0.5rem 0.85rem;
-    border-radius: 10px;
-    font-weight: 700;
-    font-size: 13px;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
-    opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 0.35s ease, transform 0.35s cubic-bezier(.2,.9,.2,1);
-    text-shadow: 0 0 10px rgba(255,255,255,0.06);
-    backdrop-filter: blur(6px);
-}
-
-/* glowing white when visible */
-#ttou-save-toast.visible {
-    opacity: 1;
-    transform: translateY(0);
-    box-shadow: 0 18px 40px rgba(0,0,0,0.6), 0 0 24px rgba(255,255,255,0.06);
-}
-
-/* subtle pulse while "Saving..." */
-#ttou-save-toast.visible::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 10px;
-    box-shadow: 0 0 18px rgba(255,255,255,0.025);
-    pointer-events: none;
-}
-
-.gallery-item {
-    position: relative;
-}
-
-/* locked creepy variant */
+/* override chains-overlay to show gif/icon instead of lock icon */
 .gallery-item.god-locked {
     background: linear-gradient(135deg,#020203,#0b0b0d);
     border-color: #050505;
     box-shadow: 0 12px 40px rgba(0,0,0,0.8), inset 0 0 80px rgba(0,0,0,0.6);
     color: #bbb;
-}
-
-/* portrait for god card */
-.god-portrait {
-    width: 88px;
-    height: 88px;
-    border-radius: 12px;
-    margin: 0 auto 1rem;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:1.25rem;
-    font-weight:900;
-    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.02), transparent 20%), linear-gradient(135deg,#111,#050505);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 40px rgba(0,0,0,0.8) inset;
-    overflow: hidden;
 }
 
 /* add an eerie spreading aura for the locked god card */
@@ -1347,19 +1302,6 @@ body {
     background: radial-gradient(closest-side, rgba(0,0,0,0.85) 10%, rgba(10,6,12,0.7) 40%, rgba(40,0,20,0.35) 60%, transparent 70%);
     filter: blur(18px) saturate(0.6);
     pointer-events: none;
-}
-
-/* override chains-overlay to show gif/icon instead of lock icon */
-.gallery-item.god-locked .chains-overlay {
-    display: block;
-    background: url('godisloveyou.png') center/48px 48px no-repeat, repeating-linear-gradient(
-        45deg,
-        rgba(0,0,0,0.0),
-        rgba(0,0,0,0.0) 6px,
-        rgba(255,0,0,0.02) 6px,
-        rgba(255,0,0,0.02) 12px
-    );
-    opacity: 0.95;
 }
 
 /* locked card name hidden; show nothing */
@@ -1491,3 +1433,12 @@ body.phone-mode .rightbar-inner { flex-direction: row; gap: 0.5rem; overflow-x: 
 body.phone-mode .rightbar-inner .right-btn { flex: 0 0 auto; white-space: nowrap; padding: 0.6rem 0.8rem; }
 body.phone-mode .roll-interface { padding: 1rem; border-radius: 14px; }
 body.phone-mode .interface-title { font-size: 1.25rem; }
+
+.result-card .card-mark {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    width: 28px;
+    height: 28px;
+    opacity: 0.9;
+}

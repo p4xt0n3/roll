@@ -53,6 +53,7 @@ const gameData = {
             "Energy Shard (The Alternate Scientist)", "Energy Shard (The Red Dust Prodigy)",
             "Energy Shard (The Elemental Master)", "G Virus", "T Virus", "C Virus",
             "T Veronica Virus", "Uroboros Virus"
+            , "Identity Proof (G Foundation)", "Identity Proof (Universe Empire)", "Identity Proof (Cosmosphere Taskforce)"
         ],
         red: [
             "The Card", "Rubix of 6th Stage Seal", "The All-See Eye of 333", "Requiem Arrow", "The Perfect DNA",
@@ -68,14 +69,16 @@ const gameData = {
             // New Red-tier items requested by user:
             "Aja Mask", "The Cog of Time", "Heaven Shard", "The Light Shard of Ultra-Ancient",
             "Heavenly Restriction", "10 Shadows Technique Manual", "Heart of Africa", "Tears of Ocean"
-            // Newly requested Red tier items
-            , "Level V Authority Keycard (Cosmosphere Taskforce)", "Level V Authority Keycard (Universe Empire)",
-            "Level V Authority Keycard (Universal Club)", "Level V Authority Keycard (The Fourth Reich)",
-            "Cursed Orb", "Universal Level Black Card", "Don Quixote's Armor", "Space-Slicing Kantana",
-            "Bunny's Kantana", "Joker Hammer", "Projenitor Virus", "Solar Diary", "Bro I'm Dead"
+            // Newly added Red items
+            , "Bunny's Kantana", "Joker Hammer", "Projenitor Virus", "Solar Diary", "Bro I'm Dead",
+            // Newly added Red items
+            "The Manual of Phil♂s♂phy", "Torned Message Paper #1", "Torned Message Paper #2",
+            "Torned Message Paper #3", "Torned Message Paper #4", "Torned Message Paper #5",
+            "Torned Message Paper #6"
+            , "Judas (Weapon)"
         ],
         black: [
-            "GOD IS LOVE YOU"
+            "GOD IS LOVE YOU", "Fixed Message Paper"
         ]
     },
     characters: {
@@ -120,14 +123,12 @@ const gameData = {
             "The Guard Captain, Saeed Ziaten","The Creator of ReLink, Dr. Rometheus",
             "Believers of the Old Dynasty, Hamke","The Future, Jacob Haavk",
             "The Western Swordmaster, Princeton Friedrich Schafer",
-            // Newly added Red characters
-            "Unsatisfied Desires, Shura", "The Start of all Tales, P",
-            // Translations for newly requested Red characters
-            "The Universe' Samurai, Moreal","The Fuhrer of New Era, Hanser Von H.",
-            "The #3 Sinner, Don Quixote","A Spark of Blue, Blash",
-            "The Sister of The Alternate, Genetina","Form of Ice, Floa",
-            "The Child of Miracle and Fortune, Flotina","The #1 Cultivator, YaoXuan",
-            "Leave no one Behind, G.T.I.","The Future Itself, Haavk"
+            // Newly added Red Sinner characters
+            "The #1 Sinner, Yi Sang","The #2 Sinner, Faust","The #3 Sinner, Don Quixote","The #4 Sinner, Ryōshū",
+            "The #5 Sinner, Meursault","The #6 Sinner, Hong Lu","The #7 Sinner, Heathcliff",
+            "The #8 Sinner, Ishmael","The #9 Sinner, Rodion","The #10 Sinner, Dante",
+            "The #11 Sinner, Sinclair","The #12 Sinner, Outis","The #13 Sinner, Gregor"
+            , "The Dark Wolf, Shuuta Jinhara"
         ]
     }
 };
@@ -188,31 +189,9 @@ class GachaSystem {
                 "Energy Shard (The Sorcerer Killer)":"能量碎片（咒术师杀手）","Energy Shard (The Alternate Scientist)":"能量碎片（伪人科学家）",
                 "Energy Shard (The Red Dust Prodigy)":"能量碎片（血尘天骄）","Energy Shard (The Elemental Master)":"能量碎片（元素大师）",
                 "G Virus":"G病毒","T Virus":"T病毒","C Virus":"C病毒","T Veronica Virus":"T维罗妮卡病毒","Uroboros Virus":"衔尾蛇病毒",
-                // Red tier
-                "The Card":"卡牌","Rubix of 6th Stage Seal":"六阶封印魔方","The All-See Eye of 333":"333全知全能之眼",
-                "Requiem Arrow":"镇魂曲之箭","The Perfect DNA":"完美基因","The Manual of ⭕💴":"⭕💴手册",
-                "Level V Authority Keycard (G Foundation)":"V级权限卡（G基金会）","True Devourer of All Souls":"真·灵魂吞噬者","Miyabi's Sealed Katana":"星见雅之封刀",
-                "Sukuna's Finger":"宿傩之指","Six Eyes":"六眼","The Bones of 87":"87的骨","New Rokakaka Fruit":"新洛卡卡卡果实",
-                "Umbra":"本影","Original Blacksite":"初源黑网","Calamity's Flow in a Bottle":"瓶中灾厄洪流","The Whole Corpse of the Saint":"圣人遗体",
-                "The Bible":"圣经","The Tale of The Old Universe":"旧宇宙物语",
-                // Added translations for new Red items
-                "Aja Mask":"艾哲红石面具","The Cog of Time":"时间齿轮","Heaven Shard":"天堂碎片",
-                "The Light Shard of Ultra-Ancient":"超古代之光碎片","Heavenly Restriction":"天与咒缚",
-                "10 Shadows Technique Manual":"十影术手册","Heart of Africa":"非洲之心","Tears of Ocean":"海洋之泪",
-                // newly added Red items translations
-                "DIO's Bone":"DIO的骨头","Crowbar from CS:GO":"来自CS:GO的撬棍","Plasma Spark Tower":"等离子火花塔",
-                "Spark Lence":"神光棒","Reverse Cursed Technique Manual":"反转术士手册","The Formula Weapon Set":"公式武器套",
-                "Executioner's Sword":"处刑者之剑",
-                // New Red tier items translations
-                "Level V Authority Keycard (Cosmosphere Taskforce)":"V级权限卡（宇宙特勤小组）",
-                "Level V Authority Keycard (Universe Empire)":"V级权限卡（宇宙帝国）",
-                "Level V Authority Keycard (Universal Club)":"V级权限卡（宇宙协会）",
-                "Level V Authority Keycard (The Fourth Reich)":"V级权限卡（第四帝国）",
-                "Cursed Orb":"诅咒圆珠","Universal Level Black Card":"宇宙级黑卡","Don Quixote's Armor":"堂吉诃德的盔甲",
-                "Space-Slicing Kantana":"空裂武士刀","Bunny's Kantana":"小兔子的武士刀","Joker Hammer":"小丑大锤",
-                "Projenitor Virus":"始祖病毒","Solar Diary":"耀日日记","Bro I'm Dead":"不是兄弟我怎么④了"
+                "Identity Proof (G Foundation)":"身份证明（G基金会）","Identity Proof (Universe Empire)":"身份证明（宇宙帝国）","Identity Proof (Cosmosphere Taskforce)":"身份证明（宇宙特勤小组）"
                 // Black
-                ,"GOD IS LOVE YOU":"GOD IS LOVE YOU"
+                ,"GOD IS LOVE YOU":"GOD IS LOVE YOU", "Fixed Message Paper": "修复的信纸"
             },
             characters: {
                 // Purple
@@ -252,7 +231,7 @@ class GachaSystem {
                 "The Strongest of Today, Gojo Satoru":"现代最强，五条悟","The Strongest in History, Ryomen Sukuna":"古代最强，两面宿傩",
                 "The one who use Black Flash as m1, Yuji Itadori":"把黑闪当普攻，虎杖悠仁","The Horse on Balcony, Juan🐎":"阳台上的马，Juan🐎",
                 // Added translations for newly requested Red characters
-                "The Sorcerer Killer, Toji Fushiguro":"伏黑甚尔","The Ten Shadows Technique User, Megumi Fushiguro":"十影术使用者，伏黑惠",
+                "The Sorcerer Killer, Toji Fushiguro":"咒术师杀手，伏黑甚尔","The Ten Shadows Technique User, Megumi Fushiguro":"十影术使用者，伏黑惠",
                 "The Security Director, Anais Desmoulins":"安全总监，阿娜伊斯 · 德穆兰","Abyss Shark, Khalil Reis":"地狱黑鲨，哈利勒 ·雷斯",
                 "The Guard Captain, Saeed Ziaten":"卫队长官，赛伊德 · 齐亚腾","The Creator of ReLink, Dr. Rometheus":"Relink脑机研发者，罗米修斯博士",
                 "Believers of the Old Dynasty, Hamke":"旧朝的信仰者，哈姆克","The Future, Jacob Haavk":"\"我们，才是未来\"，雅各布 · 哈夫克",
@@ -261,13 +240,16 @@ class GachaSystem {
                 "Unsatisfied Desires, Shura":"无法满足欲望的女仆，Shura",
                 "The Start of all Tales, P":"整个故事的起点，P",
                 // Newly added Red character translation
-                "The Freely Omni-Assassin, Clinton Hantrence Ofrento":"自由的全能刺客，克林顿 · 汉特伦斯 · 奥弗伦多"
-                // Translations for newly requested Red characters
-                ,"The Universe' Samurai, Moreal":"宇宙武士，莫莉尔","The Fuhrer of New Era, Hanser Von H.":"新时代的元首，汉瑟 · 冯 · H.",
-                "The #3 Sinner, Don Quixote":"第三位罪人，堂吉诃德","A Spark of Blue, Blash":"一抹蓝光，蓝闪",
-                "The Sister of The Alternate, Genetina":"伪人之妹，杰妮缇娜","Form of Ice, Floa":"寒冰化身，芙洛亚",
-                "The Child of Miracle and Fortune, Flotina":"奇迹与气运之女，芙洛缇娜","The #1 Cultivator, YaoXuan":"第一修仙者，曜玄",
-                "Leave no one Behind, G.T.I.":"不会抛下任何人，全球应急行动小组","The Future Itself, Haavk":"未来化身，哈夫克"
+                "Leave no one Behind, G.T.I.":"不会抛下任何人，全球应急行动小组","The Future Itself, Haavk":"未来化身，哈夫克",
+                // New Red-tier characters
+                "The #1 Sinner, Yi Sang":"第一位罪人，李箱","The #2 Sinner, Faust":"第二位罪人，浮士德",
+                "The #3 Sinner, Don Quixote":"第三位罪人，堂吉诃德","The #4 Sinner, Ryōshū":"第四位罪人，良秀",
+                "The #5 Sinner, Meursault":"第五位罪人，默尔索","The #6 Sinner, Hong Lu":"第六位罪人，鸿潞",
+                "The #7 Sinner, Heathcliff":"第七位罪人，希斯克里夫","The #8 Sinner, Ishmael":"第八位罪人，以实玛丽",
+                "The #9 Sinner, Rodion":"第九位罪人，罗佳","The #10 Sinner, Dante":"第十位罪人，但丁",
+                "The #11 Sinner, Sinclair":"第十一位罪人，辛克莱","The #12 Sinner, Outis":"第十二位罪人，奥提斯",
+                "The #13 Sinner, Gregor":"第十三位罪人，格里高尔",
+                "The Dark Wolf, Shuuta Jinhara":"黑狼，秋太甚原"
             }
         };
         
@@ -286,7 +268,7 @@ class GachaSystem {
 
         // Inventories
         this.characterInventory = []; // stores character names
-        // map itemName -> { count: number, rarity: 'blue'|'purple'|'gold'|'red' }
+        // map itemName -> { count: number, rarity: 'blue'|'purple'|'gold'|'red'|'green'|'black' }
         this.itemInventory = {};
         
         // Original rates for reset functionality
@@ -556,45 +538,6 @@ class GachaSystem {
                 skipBtn.style.background = this.skipAnimation ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.03)';
             });
         }
-
-        document.getElementById('videoInitBtn').addEventListener('click', async () => {
-            const url = document.getElementById('videoUrlInput').value.trim();
-            if (!url) { this.showVideoError('Please paste a YouTube link.'); return; }
-            const id = this.parseYouTubeId(url);
-            if (!id) { this.showVideoError('Invalid YouTube URL.'); return; }
-            // attempt to fetch oEmbed to get title/author
-            try {
-                const oembedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${encodeURIComponent(id)}&format=json`;
-                const resp = await fetch(oembedUrl);
-                if (!resp.ok) throw new Error('oEmbed failed');
-                const data = await resp.json();
-                // populate UI
-                document.getElementById('videoTitle').textContent = data.title || ('YouTube Video ' + id);
-                document.getElementById('videoAuthor').textContent = data.author_name ? `By ${data.author_name}` : '';
-                const thumb = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
-                const img = document.getElementById('videoThumb');
-                img.src = thumb;
-                img.style.display = '';
-                // enable download buttons
-                document.getElementById('downloadMp4Btn').disabled = false;
-                document.getElementById('downloadMp3Btn').disabled = false;
-                document.getElementById('videoError').style.display = 'none';
-                // store ID for later
-                this._videoDownloadId = id;
-            } catch (e) {
-                // fallback: still enable but show title from ID and smaller thumb
-                document.getElementById('videoTitle').textContent = 'YouTube Video';
-                document.getElementById('videoAuthor').textContent = '';
-                const idThumb = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-                const img = document.getElementById('videoThumb');
-                img.src = idThumb;
-                img.style.display = '';
-                document.getElementById('downloadMp4Btn').disabled = false;
-                document.getElementById('downloadMp3Btn').disabled = false;
-                this._videoDownloadId = id;
-                document.getElementById('videoError').style.display = 'none';
-            }
-        });
 
         // Download actions open external downloader pages in new tabs (best-effort)
         document.getElementById('downloadMp4Btn').addEventListener('click', () => {
@@ -1232,6 +1175,18 @@ class GachaSystem {
         if (result.rarity === 'black') {
             card.style.cursor = 'pointer';
             card.addEventListener('click', () => this.triggerGodSequence());
+        } else if (result.name === 'Fixed Message Paper') {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', () => this.showMessagePaper());
+        }
+        // add small logo mark for starred entries
+        const marked = new Set(["Judas (Weapon)", "The Dark Wolf, Shuuta Jinhara"]);
+        if (marked.has(result.name)) {
+            const mark = document.createElement('img');
+            mark.src = 'logo1.png';
+            mark.alt = '';
+            mark.className = 'card-mark';
+            card.appendChild(mark);
         }
         
         return card;
@@ -1287,8 +1242,8 @@ class GachaSystem {
                 dest.textContent = 'No items yet.';
                 return;
             }
-            // sort by rarity (black, red, gold, purple, blue) then alphabetically
-            const rarityOrder = { black: 0, red: 1, gold: 2, purple: 3, blue: 4 };
+            // sort by rarity (green, black, red, gold, purple, blue) then alphabetically
+            const rarityOrder = { green: 0, black: 1, red: 2, gold: 3, purple: 4, blue: 5 };
             keys.sort((a, b) => {
                 const ra = rarityOrder[this.getItemRarity(a) || 'blue'];
                 const rb = rarityOrder[this.getItemRarity(b) || 'blue'];
@@ -1305,6 +1260,12 @@ class GachaSystem {
                 el.style.padding = '0.5rem 0';
                 el.style.borderBottom = '1px solid var(--border-primary)';
                 el.className = `inv-item rarity-${rarity}`;
+                
+                if (name === 'Fixed Message Paper') {
+                    el.style.cursor = 'pointer';
+                    el.addEventListener('click', () => this.showMessagePaper());
+                }
+                
                 el.innerHTML = `<div class="inv-name">${this.translateName(name)}</div><div style="color:var(--text-secondary)">${count}×</div>`;
                 dest.appendChild(el);
             });
@@ -1318,7 +1279,9 @@ class GachaSystem {
     // refresh craft material count badges inside the crafting modal
     updateCraftListCounts() {
         // map materials to counts using helper
-        const needed = ['Dragon Ball','Tier I Spiritual Bow Embryo','Book of Ignis','Book of Terra','Book of Aqua'];
+        const needed = ['Dragon Ball','Tier I Spiritual Bow Embryo','Book of Ignis','Book of Terra','Book of Aqua',
+                       'Torned Message Paper #1','Torned Message Paper #2','Torned Message Paper #3',
+                       'Torned Message Paper #4','Torned Message Paper #5','Torned Message Paper #6'];
         const countsMap = {};
         needed.forEach(n => countsMap[n] = this.getItemCount(n));
         document.querySelectorAll('.material-count').forEach(el => {
@@ -1378,18 +1341,28 @@ class GachaSystem {
                      msgEl.textContent = 'Missing Book of Terra or Book of Aqua.';
                      if (btn) { btn.classList.remove('loading'); btn.textContent = 'Craft'; }
                  }
+             } else if (recipe === 'fixedMessage') {
+                if (hasItem('Torned Message Paper #1',1) && hasItem('Torned Message Paper #2',1) && 
+                    hasItem('Torned Message Paper #3',1) && hasItem('Torned Message Paper #4',1) &&
+                    hasItem('Torned Message Paper #5',1) && hasItem('Torned Message Paper #6',1)) {
+                    this.decItem('Torned Message Paper #1', 1);
+                    this.decItem('Torned Message Paper #2', 1);
+                    this.decItem('Torned Message Paper #3', 1);
+                    this.decItem('Torned Message Paper #4', 1);
+                    this.decItem('Torned Message Paper #5', 1);
+                    this.decItem('Torned Message Paper #6', 1);
+                    // crafted Fixed Message Paper - set rarity to green (special)
+                    this.incItem('Fixed Message Paper', 1, 'green');
+                    msgEl.style.color = '#9ae6b4';
+                    msgEl.textContent = 'Crafted Fixed Message Paper!';
+                    if (btn) { btn.classList.remove('loading'); btn.classList.add('success'); btn.textContent = 'Done'; }
+                } else {
+                    msgEl.style.color = '#fca5a5';
+                    msgEl.textContent = 'Missing all 6 torn message papers.';
+                    if (btn) { btn.classList.remove('loading'); btn.textContent = 'Craft'; }
+                }
              }
-             // Clean zeroes
-             for (const k of Object.keys(this.itemInventory)) {
-                 if (!this.itemInventory[k] || this.itemInventory[k].count <= 0) delete this.itemInventory[k];
-             }
-             // refresh inventory view and crafting counts if open
-             if (document.getElementById('inventoryModal').style.display === 'flex') this.showInventory('items');
-             this.updateCraftListCounts();
-             // revert success button after short delay
-             if (btn && btn.classList.contains('success')) {
-                 setTimeout(() => { btn.classList.remove('success'); btn.textContent = 'Craft'; }, 1200);
-             }
+             // ...existing code...
          }, 700);
      }
     
@@ -1404,7 +1377,7 @@ class GachaSystem {
         if (!this.itemInventory[name]) this.itemInventory[name] = { count: 0, rarity };
         this.itemInventory[name].count += amount;
         // if a higher rarity is ever added later, preserve the highest rarity label (red > gold > purple > blue)
-        const order = { blue: 0, purple: 1, gold: 2, red: 3 };
+        const order = { blue: 0, purple: 1, gold: 2, red: 3, green: 4, black: 5 };
         if (rarity && order[rarity] > order[this.itemInventory[name].rarity]) {
             this.itemInventory[name].rarity = rarity;
         }
@@ -1544,9 +1517,9 @@ class GachaSystem {
         document.getElementById('singleCost').textContent = (this.language === 'zh') ? '10 ⭐' : '10 ⭐';
         document.getElementById('tenCost').textContent = (this.language === 'zh') ? '100 ⭐' : '100 ⭐';
         // Roll button text
-        const rollBtnText = this.currentRollType === 1 ? txt.rollNowSingle : txt.rollNowTen;
         const rollBtn = document.getElementById('executeRoll');
-        if (rollBtn) rollBtn.querySelector('.btn-text').textContent = rollBtnText;
+        const btnText = rollBtn.querySelector('.btn-text');
+        btnText.textContent = this.currentRollType === 1 ? txt.rollNowSingle : txt.rollNowTen;
         // Recent pulls & clear
         const rh = document.querySelector('.results-header h3');
         if (rh) rh.textContent = txt.recentPulls;
@@ -1768,7 +1741,7 @@ class GachaSystem {
         audio.play().catch(()=>{});
         audio.addEventListener('ended', ()=> { try{ wrap.remove(); }catch(e){} });
         // safety remove after 12s if audio fails
-        setTimeout(()=>{ if (document.getElementById('rockstare-wrap')) try{ wrap.remove(); }catch(e){} }, 12000);
+        setTimeout(() => { if (document.getElementById('rockstare-wrap')) try { wrap.remove(); } catch (e) { } }, 12000);
     };
 
     triggerGodSequence() {
@@ -1792,7 +1765,7 @@ class GachaSystem {
                 // spawn rate increases with time
                 const progress = Math.min(1, elapsed / spawnDuration);
                 const spawnPerFrame = 1 + Math.floor(progress * 6);
-                for (let i=0;i<spawnPerFrame;i++){
+                for (let i = 0; i < spawnPerFrame; i++) {
                     const span = document.createElement('div');
                     span.className = 'god-small';
                     span.textContent = 'GOD IS LOVE YOU';
@@ -1804,14 +1777,14 @@ class GachaSystem {
                     overlay.appendChild(span);
                     smalls.push(span);
                     // animate in/out
-                    const dx = (Math.random()-0.5)*200;
-                    const dy = (Math.random()-0.5)*200;
+                    const dx = (Math.random() - 0.5) * 200;
+                    const dy = (Math.random() - 0.5) * 200;
                     span.animate([
                         { transform: 'translate(0,0)', opacity: 0 },
                         { transform: `translate(${dx}px, ${dy}px)`, opacity: 1 },
-                        { transform: `translate(${dx*1.5}px, ${dy*1.5}px)`, opacity: 0 }
-                    ], { duration: 3000 + Math.random()*3000, easing: 'ease-in-out' }).onfinish = () => {
-                        try { span.remove(); }catch(e){}
+                        { transform: `translate(${dx * 1.5}px, ${dy * 1.5}px)`, opacity: 0 }
+                    ], { duration: 3000 + Math.random() * 3000, easing: 'ease-in-out' }).onfinish = () => {
+                        try { span.remove(); } catch (e) { }
                     };
                 }
                 if (elapsed < spawnDuration) requestAnimationFrame(spawnLoop);
@@ -1819,7 +1792,7 @@ class GachaSystem {
                     // after spawnDuration + short wait, remove smalls and show letters
                     setTimeout(() => {
                         // remove any lingering small nodes
-                        document.querySelectorAll('.god-small').forEach(n=>n.remove());
+                        document.querySelectorAll('.god-small').forEach(n => n.remove());
                         this.showGodLetters(overlay, originalTitle);
                     }, 800);
                 }
@@ -1836,7 +1809,7 @@ class GachaSystem {
         overlay.appendChild(container);
         // create letter buttons
         const buttons = [];
-        for (let i=0;i<phrase.length;i++){
+        for (let i = 0; i < phrase.length; i++) {
             const ch = phrase[i];
             const btn = document.createElement('div');
             btn.className = 'god-letter';
@@ -1867,7 +1840,7 @@ class GachaSystem {
                 } else {
                     // wrong click: mark red briefly
                     btn.classList.add('wrong');
-                    setTimeout(()=>btn.classList.remove('wrong'), 600);
+                    setTimeout(() => btn.classList.remove('wrong'), 600);
                 }
             });
         });
@@ -2001,15 +1974,15 @@ class GachaSystem {
         img.style.transition = 'opacity .4s ease';
         wrap.appendChild(img);
         document.body.appendChild(wrap);
-        requestAnimationFrame(()=> { img.style.opacity = '1'; });
+        requestAnimationFrame(() => { img.style.opacity = '1'; });
         const audio = new Audio(audioSrc);
-        audio.play().catch(()=>{});
-        audio.addEventListener('ended', ()=> {
+        audio.play().catch(() => { });
+        audio.addEventListener('ended', () => {
             img.style.opacity = '0';
-            setTimeout(()=>{ try{ wrap.remove(); }catch(e){} }, 500);
+            setTimeout(() => { try { wrap.remove(); } catch (e) { } }, 500);
         });
         // safety timeout
-        setTimeout(()=>{ if (document.getElementById('fx-media-wrap')) try{ document.getElementById('fx-media-wrap').remove(); }catch(e){} }, 20000);
+        setTimeout(() => { if (document.getElementById('fx-media-wrap')) try { document.getElementById('fx-media-wrap').remove(); } catch (e) { } }, 20000);
     }
 
     sequenceNahidGojo() {
@@ -2032,10 +2005,10 @@ class GachaSystem {
                 img.style.opacity = '0';
                 img.style.transition = 'opacity .25s ease';
                 wrap.appendChild(img);
-                requestAnimationFrame(()=> img.style.opacity = '1');
-                setTimeout(()=> {
+                requestAnimationFrame(() => img.style.opacity = '1');
+                setTimeout(() => {
                     img.style.opacity = '0';
-                    setTimeout(()=> { img.remove(); res(); }, 300);
+                    setTimeout(() => { img.remove(); res(); }, 300);
                 }, holdMs);
             });
         };
@@ -2052,8 +2025,11 @@ class GachaSystem {
         const wrap = document.createElement('div');
         wrap.id = 'rick-wrap';
         wrap.style.position = 'fixed';
-        wrap.style.inset = '0';
-        wrap.style.zIndex = '99999';
+        wrap.style.top = '0';
+        wrap.style.left = '0';
+        wrap.style.right = '0';
+        wrap.style.bottom = '0';
+        wrap.style.zIndex = '3000';
         wrap.style.display = 'flex';
         wrap.style.alignItems = 'center';
         wrap.style.justifyContent = 'center';
@@ -2074,7 +2050,7 @@ class GachaSystem {
         box.appendChild(iframe);
         wrap.appendChild(box);
         document.body.appendChild(wrap);
-        wrap.addEventListener('click', (e) => { if (e.target===wrap) wrap.remove(); });
+        wrap.addEventListener('click', (e) => { if (e.target === wrap) wrap.remove(); });
     }
 
     showXhz() {
@@ -2095,14 +2071,14 @@ class GachaSystem {
         inner.style.background = 'rgba(255,255,255,0.02)';
         inner.style.padding = '12px 18px';
         inner.style.borderRadius = '8px';
-        const left = document.createElement('img'); left.src = 'kun.jpg'; left.style.maxHeight = '220px'; left.style.opacity='0';
-        const eq = document.createElement('div'); eq.textContent = '='; eq.style.fontSize='48px'; eq.style.color='#fff';
-        const right = document.createElement('img'); right.src = 'chicken.jpg'; right.style.maxHeight = '220px'; right.style.opacity='0';
+        const left = document.createElement('img'); left.src = 'kun.jpg'; left.style.maxHeight = '220px'; left.style.opacity = '0';
+        const eq = document.createElement('div'); eq.textContent = '='; eq.style.fontSize = '48px'; eq.style.color = '#fff';
+        const right = document.createElement('img'); right.src = 'chicken.jpg'; right.style.maxHeight = '220px'; right.style.opacity = '0';
         inner.appendChild(left); inner.appendChild(eq); inner.appendChild(right);
         wrap.appendChild(inner);
         document.body.appendChild(wrap);
-        requestAnimationFrame(()=> { left.style.transition='opacity .25s'; right.style.transition='opacity .25s'; left.style.opacity='1'; right.style.opacity='1';});
-        setTimeout(()=>{ left.style.opacity='0'; right.style.opacity='0'; setTimeout(()=>wrap.remove(),400); }, 2500);
+        requestAnimationFrame(() => { left.style.transition = 'opacity .25s'; right.style.transition = 'opacity .25s'; left.style.opacity = '1'; right.style.opacity = '1'; });
+        setTimeout(() => { left.style.opacity = '0'; right.style.opacity = '0'; setTimeout(() => wrap.remove(), 400); }, 2500);
     }
 
     // determine character rarity by searching character lists (purple/gold/red). default 'purple' if not found
@@ -2119,18 +2095,18 @@ class GachaSystem {
         this.theme = theme === 'light' ? 'light' : 'dark';
         localStorage.setItem('ttou_theme', this.theme);
         if (this.theme === 'light') {
-            document.documentElement.style.setProperty('--bg-primary','#ffffff');
-            document.documentElement.style.setProperty('--bg-secondary','#f5f5f5');
-            document.documentElement.style.setProperty('--bg-tertiary','#ffffff');
-            document.documentElement.style.setProperty('--text-primary','#0a0a0f');
-            document.documentElement.style.setProperty('--border-primary','#e5e7eb');
+            document.documentElement.style.setProperty('--bg-primary', '#ffffff');
+            document.documentElement.style.setProperty('--bg-secondary', '#f5f5f5');
+            document.documentElement.style.setProperty('--bg-tertiary', '#ffffff');
+            document.documentElement.style.setProperty('--text-primary', '#0a0a0f');
+            document.documentElement.style.setProperty('--border-primary', '#e5e7eb');
             // adjust other accent if needed
         } else {
-            document.documentElement.style.setProperty('--bg-primary','#0a0a0f');
-            document.documentElement.style.setProperty('--bg-secondary','#161620');
-            document.documentElement.style.setProperty('--bg-tertiary','#1e1e2a');
-            document.documentElement.style.setProperty('--text-primary','#ffffff');
-            document.documentElement.style.setProperty('--border-primary','#2a2a3a');
+            document.documentElement.style.setProperty('--bg-primary', '#0a0a0f');
+            document.documentElement.style.setProperty('--bg-secondary', '#161620');
+            document.documentElement.style.setProperty('--bg-tertiary', '#1e1e2a');
+            document.documentElement.style.setProperty('--text-primary', '#ffffff');
+            document.documentElement.style.setProperty('--border-primary', '#2a2a3a');
         }
         // update radio checked state if settings modal present
         document.querySelectorAll('input[name="ttou-theme"]').forEach(r => { r.checked = (r.value === this.theme); });
@@ -2190,7 +2166,7 @@ class GachaSystem {
         }
         this.updateStellarCoinDisplay();
         // brief auto-close after 2.5s
-        setTimeout(()=> { try { document.getElementById('gambleModal').style.display='none'; } catch(e){} }, 2500);
+        setTimeout(() => { try { document.getElementById('gambleModal').style.display = 'none'; } catch (e) { } }, 2500);
     }
 
     // Show Sell Modal
@@ -2277,7 +2253,8 @@ class GachaSystem {
             purple: 50,
             gold: 150,
             red: 500,
-            black: 1000 // Special price for black items
+            black: 1000, // Special price for black items
+            green: 2000 // Special price for green items
         };
         return prices[rarity] || 10;
     }
@@ -2336,7 +2313,7 @@ class GachaSystem {
         if (this.username) {
             const logo = document.querySelector('.logo');
             if (logo && !document.getElementById('userBadge')) {
-                const b = document.createElement('div'); b.id='userBadge'; b.style.marginTop='0.5rem'; b.style.color='var(--text-secondary)'; b.textContent = `User: ${this.username}`; logo.appendChild(b);
+                const b = document.createElement('div'); b.id = 'userBadge'; b.style.marginTop = '0.5rem'; b.style.color = 'var(--text-secondary)'; b.textContent = `User: ${this.username}`; logo.appendChild(b);
             } else if (logo && document.getElementById('userBadge')) {
                 document.getElementById('userBadge').textContent = `User: ${this.username}`;
             }
@@ -2357,39 +2334,39 @@ class GachaSystem {
         const saved = localStorage.getItem('ttou_save');
         const savedName = localStorage.getItem('ttou_username');
         if (saved && savedName) {
-            try { this.loadState(saved); this.username = savedName; this.updateStellarCoinDisplay(); modal.style.display='none'; return; } catch(e){}
+            try { this.loadState(saved); this.username = savedName; this.updateStellarCoinDisplay(); modal.style.display = 'none'; return; } catch (e) { }
         }
 
         // handlers
-        document.getElementById('startupYes').addEventListener('click', () => { q.style.display='none'; imp.style.display='block'; });
-        document.getElementById('startupNo').addEventListener('click', () => { q.style.display='none'; uni.style.display='block'; nameInput.focus(); });
-        document.getElementById('startupImportCancel').addEventListener('click', ()=> { imp.style.display='none'; q.style.display='block'; });
-        document.getElementById('startupNameCancel').addEventListener('click', ()=> { uni.style.display='none'; q.style.display='block'; });
+        document.getElementById('startupYes').addEventListener('click', () => { q.style.display = 'none'; imp.style.display = 'block'; });
+        document.getElementById('startupNo').addEventListener('click', () => { q.style.display = 'none'; uni.style.display = 'block'; nameInput.focus(); });
+        document.getElementById('startupImportCancel').addEventListener('click', () => { imp.style.display = 'none'; q.style.display = 'block'; });
+        document.getElementById('startupNameCancel').addEventListener('click', () => { uni.style.display = 'none'; q.style.display = 'block'; });
 
-        document.getElementById('startupImportBtn').addEventListener('click', ()=> {
+        document.getElementById('startupImportBtn').addEventListener('click', () => {
             const txt = importTextarea.value.trim();
-            if (!txt) { document.getElementById('startupImportMsg').textContent='Please paste a save code.'; return; }
+            if (!txt) { document.getElementById('startupImportMsg').textContent = 'Please paste a save code.'; return; }
             try {
                 this.loadState(txt);
                 // persist to localStorage
                 localStorage.setItem('ttou_save', this.exportState());
                 if (this.username) localStorage.setItem('ttou_username', this.username);
-                document.getElementById('startupImportMsg').textContent='Import successful! Entering...';
-                setTimeout(()=> { modal.style.display='none'; this.updateStellarCoinDisplay(); }, 700);
+                document.getElementById('startupImportMsg').textContent = 'Import successful! Entering...';
+                setTimeout(() => { modal.style.display = 'none'; this.updateStellarCoinDisplay(); }, 700);
             } catch (e) {
-                document.getElementById('startupImportMsg').textContent='Invalid save code.';
+                document.getElementById('startupImportMsg').textContent = 'Invalid save code.';
             }
         });
 
-        document.getElementById('startupNameBtn').addEventListener('click', ()=> {
+        document.getElementById('startupNameBtn').addEventListener('click', () => {
             const v = nameInput.value.trim();
             if (!v) { nameInput.focus(); return; }
             this.username = v;
             localStorage.setItem('ttou_username', v);
             welcome.textContent = `Welcome to TTOU Gacha Simulator, ${v}`;
-            uni.style.display='none';
-            welcome.style.display='block';
-            setTimeout(()=> { modal.style.display='none'; this.updateStellarCoinDisplay(); }, 900);
+            uni.style.display = 'none';
+            welcome.style.display = 'block';
+            setTimeout(() => { modal.style.display = 'none'; this.updateStellarCoinDisplay(); }, 900);
         });
     }
 
@@ -2401,7 +2378,7 @@ class GachaSystem {
         this._autosaveInterval = setInterval(() => this.performAutoSave(), 60 * 1000);
         // also ensure we save on page unload
         window.addEventListener('beforeunload', () => {
-            try { localStorage.setItem('ttou_save', this.exportState()); } catch(e){}
+            try { localStorage.setItem('ttou_save', this.exportState()); } catch (e) { }
         });
     }
 
@@ -2526,6 +2503,84 @@ class GachaSystem {
         const rollBtn = document.getElementById('executeRoll');
         if (rollBtn) rollBtn.style.padding = phone ? '0.8rem 1.4rem' : '';
         if (!initial) this.updateRandomCoinButton();
+    }
+
+    // New method to show the message paper content
+    showMessagePaper() {
+        // Create modal for the message paper
+        if (document.getElementById('messagePaperModal')) return; // Already open
+        
+        const modal = document.createElement('div');
+        modal.id = 'messagePaperModal';
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.right = '0';
+        modal.style.bottom = '0';
+        modal.style.zIndex = '3000';
+        modal.style.display = 'flex';
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+        modal.style.background = 'rgba(0,0,0,0.8)';
+        
+        const content = document.createElement('div');
+        content.style.background = '#f5f5dc'; // Paper color
+        content.style.color = '#2c2c2c'; // Pencil-like dark text
+        content.style.padding = '3rem';
+        content.style.borderRadius = '12px';
+        content.style.maxWidth = '600px';
+        content.style.width = '90%';
+        content.style.fontFamily = '"Comic Sans MS", cursive, sans-serif'; // Handwritten style
+        content.style.fontSize = '16px';
+        content.style.lineHeight = '1.6';
+        content.style.position = 'relative';
+        content.style.boxShadow = '0 0 30px rgba(0,0,0,0.5)';
+        content.style.border = '2px solid #ddd';
+        
+        // Add close button
+        const closeBtn = document.createElement('button');
+        closeBtn.textContent = '×';
+        closeBtn.style.position = 'absolute';
+        closeBtn.style.top = '10px';
+        closeBtn.style.right = '15px';
+        closeBtn.style.background = 'none';
+        closeBtn.style.border = 'none';
+        closeBtn.style.fontSize = '24px';
+        closeBtn.style.cursor = 'pointer';
+        closeBtn.style.color = '#666';
+        closeBtn.addEventListener('click', () => modal.remove());
+        
+        // Add the message content
+        const messageDiv = document.createElement('div');
+        messageDiv.innerHTML = `
+            <div style="text-align: center; margin-bottom: 2rem; font-size: 18px; font-weight: bold;">
+                Final Message
+            </div>
+            
+            <div style="margin-bottom: 2rem;">
+                <strong>English:</strong><br>
+                If you see this, please give this paper to Halluos Family, this is my last word, I have no hope to escape this war, but i never regret to be a Cultivator...<br><br>
+                ...He is here...<br>
+                ...
+            </div>
+            
+            <div>
+                <strong>Chinese:</strong><br>
+                如果你看到这张纸，请送往哈罗斯家族，这是我的遗言，我没有任何希望逃离这里，但是我从不后悔成为一个修仙者...<br><br>
+                ...他来了...<br>
+                ...
+            </div>
+        `;
+        
+        content.appendChild(closeBtn);
+        content.appendChild(messageDiv);
+        modal.appendChild(content);
+        document.body.appendChild(modal);
+        
+        // Close on overlay click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.remove();
+        });
     }
 }
 
