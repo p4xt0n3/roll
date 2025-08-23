@@ -1410,6 +1410,19 @@ body {
 }
 .god-locked-tip.show { opacity:1; transform: translateX(-50%) translateY(0); }
 
+.mode-toggle-wrap { margin-top: 0.75rem; }
+.mode-toggle-btn {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid var(--border-primary);
+    background: var(--gradient-bg);
+    color: var(--text-primary);
+    transition: all 0.18s ease;
+}
+
 /* Responsive design */
 @media (max-width: 1024px) {
     .app-container {
@@ -1464,3 +1477,17 @@ body {
         flex-direction: column;
     }
 }
+
+body.phone-mode .app-container { flex-direction: column; }
+body.phone-mode .sidebar { width: 100%; padding: 0.9rem 1rem; border-right: none; border-bottom: 1px solid var(--border-primary); gap: 1rem; }
+body.phone-mode .logo h1 { font-size: 1.35rem; }
+body.phone-mode .subtitle { display: none; }
+body.phone-mode .roll-options { flex-direction: row; gap: 0.6rem; }
+body.phone-mode .roll-option { padding: 0.9rem; border-radius: 12px; }
+body.phone-mode .main-content { padding: 1rem; gap: 1rem; }
+body.phone-mode .results-grid { grid-template-columns: 1fr; max-height: 52vh; }
+body.phone-mode .rightbar { position: sticky; bottom: 0; width: 100%; border-left: none; border-top: 1px solid var(--border-primary); padding: 0.6rem; background: var(--bg-secondary); }
+body.phone-mode .rightbar-inner { flex-direction: row; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.25rem; }
+body.phone-mode .rightbar-inner .right-btn { flex: 0 0 auto; white-space: nowrap; padding: 0.6rem 0.8rem; }
+body.phone-mode .roll-interface { padding: 1rem; border-radius: 14px; }
+body.phone-mode .interface-title { font-size: 1.25rem; }

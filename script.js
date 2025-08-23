@@ -139,6 +139,7 @@ class GachaSystem {
         this.stellarCoin = 100; // start with 100 StellarCoin by default
         this.language = 'en'; // 'en' or 'zh' - affects displayed names only
         this.theme = localStorage.getItem('ttou_theme') || 'dark'; // 'dark' or 'light'
+        this.viewMode = localStorage.getItem('ttou_viewmode') || 'auto'; // 'auto' | 'phone' | 'laptop'
         this.translations = {
             // only mapping for items and characters needed for UI translation
             items: {
@@ -226,7 +227,7 @@ class GachaSystem {
                 "Wood":"腐木","The Mysterio":"神秘客","Hyper":"海帕","Misma":"米斯玛","Collision":"碰撞",
                 // newly added Gold characters translations
                 "Moriarty Zecto Crescent":"莫里亚蒂 · 泽克托 · 克里森特","Asagi Mutsuki":"浅黄睦月","Z":"Z","Gojo Satoru":"五条悟",
-                "Ryomen Sukuna":"两面宿挪","Yuji Itadori":"虎杖悠仁","Juan🐎":"Juan🐎",
+                "Ryomen Sukuna":"两面宿傩","Yuji Itadori":"虎杖悠仁","Juan🐎":"Juan🐎",
                 // Added translations for newly requested Gold characters
                 "Toji Fushiguro":"伏黑甚尔","Megumi Fushiguro":"伏黑惠","Anais Desmoulins":"阿娜伊斯 · 德穆兰",
                 "Khalil Reis":"哈利勒 · 雷斯","Saeed Ziaten":"赛伊德 · 齐亚腾","Dr. Rometheus":"罗米修斯博士",
@@ -248,7 +249,7 @@ class GachaSystem {
                 // newly added Red characters translations
                 "The Genius of Crescent Family, Moriarty Zecto Crescent":"克里森特家族天才，莫里亚蒂 · 泽克托 · 克里森特",
                 "Chief of Staff, Asagi Mutsuki":"参谋长，浅黄睦月","The One who stays outside Universe, Z":"宇宙之外的人，Z",
-                "The Strongest of Today, Gojo Satoru":"现代最强，五条悟","The Strongest in History, Ryomen Sukuna":"古代最强，两面宿挪",
+                "The Strongest of Today, Gojo Satoru":"现代最强，五条悟","The Strongest in History, Ryomen Sukuna":"古代最强，两面宿傩",
                 "The one who use Black Flash as m1, Yuji Itadori":"把黑闪当普攻，虎杖悠仁","The Horse on Balcony, Juan🐎":"阳台上的马，Juan🐎",
                 // Added translations for newly requested Red characters
                 "The Sorcerer Killer, Toji Fushiguro":"伏黑甚尔","The Ten Shadows Technique User, Megumi Fushiguro":"十影术使用者，伏黑惠",
@@ -377,6 +378,9 @@ class GachaSystem {
         this.setupEventListeners();
         this.setupDebugSystem();
         this.applyTheme(this.theme); // apply stored theme on init
+        this.applyViewMode(true);
+        window.addEventListener('resize', () => this.applyViewMode());
+        
         // show startup import/name modal on launch
         setTimeout(()=> this.initStartupFlow(), 100);
 
@@ -420,6 +424,16 @@ class GachaSystem {
                 autoRollBtn.textContent = `Auto Roll: ${this.autoRoll ? 'On' : 'Off'}`;
                 autoRollBtn.style.background = this.autoRoll ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.03)';
                 if (this.autoRoll) this.startAutoRoll(); else this.stopAutoRoll();
+            });
+        }
+        
+        // Mode toggle button (Phone/Laptop/Auto)
+        const modeBtn = document.getElementById('modeToggleBtn');
+        if (modeBtn) {
+            modeBtn.addEventListener('click', () => {
+                this.viewMode = this.viewMode === 'auto' ? 'phone' : (this.viewMode === 'phone' ? 'laptop' : 'auto');
+                localStorage.setItem('ttou_viewmode', this.viewMode);
+                this.applyViewMode();
             });
         }
         
@@ -2493,6 +2507,25 @@ class GachaSystem {
         if (!this._autoRollInterval) return;
         clearInterval(this._autoRollInterval);
         this._autoRollInterval = null;
+    }
+
+    applyViewMode(initial = false) {
+        const isNarrow = window.innerWidth <= 768;
+        const isMobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        let phone = false;
+        if (this.viewMode === 'phone') phone = true;
+        else if (this.viewMode === 'laptop') phone = false;
+        else phone = isNarrow || isMobileUA; // auto
+        document.body.classList.toggle('phone-mode', phone);
+        const btn = document.getElementById('modeToggleBtn');
+        if (btn) {
+            const label = this.viewMode === 'auto' ? 'Auto' : (this.viewMode === 'phone' ? 'On' : 'Off');
+            btn.textContent = `Phone Mode: ${label}`;
+        }
+        // minor tweaks for costs/button text sizes in phone mode
+        const rollBtn = document.getElementById('executeRoll');
+        if (rollBtn) rollBtn.style.padding = phone ? '0.8rem 1.4rem' : '';
+        if (!initial) this.updateRandomCoinButton();
     }
 }
 
