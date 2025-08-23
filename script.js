@@ -73,7 +73,8 @@ const gameData = {
             // New Red-tier items
             "The Manual of Phil♂s♂phy", "Torned Message Paper #1", "Torned Message Paper #2",
             "Torned Message Paper #3", "Torned Message Paper #4", "Torned Message Paper #5",
-            "Torned Message Paper #6"
+            "Torned Message Paper #6", "Judas (Weapon)", "Mandelbrick", "Turbrick", "Quantum Key", "Delta Coin", "Delta Ticket", "Universal Keycard", "999.9 Gold Bar", "Mandelbrick Supercomputing Unit", "Mandelbrick Minicomputing Unit", "Super Dragon Ball", "Ultra Key", "Saeed's Certification Crate", "Quantum Storage", "Reis' Certification Crate", "Desmoulins' Certification Crate", "G Foundation Guest Card", "ReLink Neural Device", "Green Baby", "Scroll of 14 Phrase", "Energy Shard (For The Delta δ)", "Energy Shard (Crystallized)", "Energy Shard (Nuclear Star)", "⭕💴 In a Bottle", "Paxton's Bank Card", "G's Bank Card", "Photo of DIO"
+
         ],
         black: [
             "GOD IS LOVE YOU"
@@ -125,7 +126,9 @@ const gameData = {
             "The #1 Sinner, Yi Sang","The #2 Sinner, Faust","The #3 Sinner, Don Quixote","The #4 Sinner, Ryōshū",
             "The #5 Sinner, Meursault","The #6 Sinner, Hong Lu","The #7 Sinner, Heathcliff",
             "The #8 Sinner, Ishmael","The #9 Sinner, Rodion","The #10 Sinner, Dante",
-            "The #11 Sinner, Sinclair","The #12 Sinner, Outis","The #13 Sinner, Gregor"
+            "The #11 Sinner, Sinclair","The #12 Sinner, Outis","The #13 Sinner, Gregor",
+          //Newly Added Red Boi
+          "The Dark Wolf, Shuuta Jinhara"
         ]
     }
 };
@@ -208,9 +211,11 @@ class GachaSystem {
                 "The Manual of Phil♂s♂phy":"哲♂学手册","Torned Message Paper #1":"碎掉的信纸#1",
                 "Torned Message Paper #2":"碎掉的信纸#2","Torned Message Paper #3":"碎掉的信纸#3",
                 "Torned Message Paper #4":"碎掉的信纸#4","Torned Message Paper #5":"碎掉的信纸#5",
-                "Torned Message Paper #6":"碎掉的信纸#6"
+                "Torned Message Paper #6":"碎掉的信纸#6",
+              "Judas (Weapon)":"『犹大』", "Mandelbrick":"曼德尔砖", "Turbrick":"图灵砖", "Quantum Key":"量子密钥", "Delta Coin":"三角币", "Delta Ticket":"三角券", "Universal Keycard":"万能钥匙卡", "999.9 Gold Bar":"万足金条", "Mandelbrick Supercomputing Unit":"曼德尔超算单元", "Mandelbrick Minicomputing Unit":"曼德尔口算单元", "Super Dragon Ball":"超龙珠", "Ultra Key":"奥特钥匙", "Saeed's Certification Crate":"赛伊德认证箱", "Quantum Storage":"量子存储", "Reis' Certification Crate":"雷斯认证箱", "Desmoulins' Certification Crate":"德穆兰认证箱", "G Foundation Guest Card":"G基金会游客卡", "ReLink Neural Device":"ReLink脑机", "Green Baby":"绿色婴儿", "Scroll of 14 Phrase":"十四密语卷轴", "Energy Shard (For The Delta δ)":"能量碎片（为德尔塔δ）", "Energy Shard (Crystallized)":"能量碎片（晶化）", "Energy Shard (Nuclear Star)":"能量碎片（原子星）", "⭕💴 In a Bottle":"瓶中⭕💴", "Paxton's Bank Card":"帕克斯顿的银行卡", "G's Bank Card":"G的银行卡", "Photo of DIO":"DIO的照片"
+
                 // Black
-                ,"GOD IS LOVE YOU":"GOD IS LOVE YOU"
+                ,"GOD IS LOVE YOU":"上帝爱你"
             },
             characters: {
                 // Purple
@@ -267,7 +272,9 @@ class GachaSystem {
                 "The #7 Sinner, Heathcliff":"第七位罪人，希斯克里夫","The #8 Sinner, Ishmael":"第八位罪人，以实玛丽",
                 "The #9 Sinner, Rodion":"第九位罪人，罗佳","The #10 Sinner, Dante":"第十位罪人，但丁",
                 "The #11 Sinner, Sinclair":"第十一位罪人，辛克莱","The #12 Sinner, Outis":"第十二位罪人，奥提斯",
-                "The #13 Sinner, Gregor":"第十三位罪人，格里高尔"
+                "The #13 Sinner, Gregor":"第十三位罪人，格里高尔",
+              //Did u mew today?
+              "The Dark Wolf, Shuuta Jinhara":"黑狼，秋太甚原"
             }
         };
         
