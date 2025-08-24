@@ -670,6 +670,21 @@ class GachaSystem {
         // Execute gamble action
         document.getElementById('gambleExecuteBtn').addEventListener('click', () => { this.executeGamble(); });
         document.getElementById('gambleAmountInput').addEventListener('keypress', (e)=> { if (e.key==='Enter') this.executeGamble(); });
+        // Unlock System
+        const unlockBtn = document.getElementById('unlockBtn');
+        if (unlockBtn) unlockBtn.addEventListener('click', ()=> { this.openUnlockModal('mandelbrick'); });
+        document.getElementById('closeUnlockModal').addEventListener('click', ()=> document.getElementById('unlockModal').style.display='none');
+        document.querySelectorAll('.unlock-tab').forEach(t=> t.addEventListener('click', (e)=> {
+            document.querySelectorAll('.unlock-tab').forEach(x=>x.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            const mode = e.currentTarget.dataset.mode;
+            this.setUnlockMode(mode);
+        }));
+        document.getElementById('unlockRollOnce').addEventListener('click', ()=> this.handleUnlockRoll(1));
+        document.getElementById('unlockRollCustom').addEventListener('click', ()=> {
+            const n = Math.max(1, parseInt(document.getElementById('unlockCustomCount').value||'1',10));
+            this.handleUnlockRoll(n);
+        });
     }
     
     setupDebugSystem() {
@@ -2353,6 +2368,15 @@ class GachaSystem {
     // New: startup modal logic
     initStartupFlow() {
         const modal = document.getElementById('startupModal');
+        if (!modal) {
+            // Startup modal removed from DOM — attempt safe auto-load of any saved state and return.
+            try {
+                const saved = localStorage.getItem('ttou_save');
+                const savedName = localStorage.getItem('ttou_username');
+                if (saved && savedName) { this.loadState(saved); this.username = savedName; this.updateStellarCoinDisplay(); }
+            } catch (e) { /* ignore load errors when modal absent */ }
+            return;
+        }
         const q = document.getElementById('startupQuestion');
         const imp = document.getElementById('startupImport');
         const uni = document.getElementById('startupUsername');
@@ -2533,6 +2557,75 @@ class GachaSystem {
         const rollBtn = document.getElementById('executeRoll');
         if (rollBtn) rollBtn.style.padding = phone ? '0.8rem 1.4rem' : '';
         if (!initial) this.updateRandomCoinButton();
+    }
+
+    openUnlockModal(mode='mandelbrick') {
+        this._unlockMode = mode;
+        document.getElementById('unlockModal').style.display = 'flex';
+        this.setUnlockMode(mode);
+        document.getElementById('unlockResults').innerHTML = '';
+    }
+    setUnlockMode(mode) {
+        this._unlockMode = mode;
+        const img = document.getElementById('unlockImage');
+        img.src = mode === 'mandelbrick' ? 'mandelbrick.jpg' : 'turbrick.jpg';
+        this.updateUnlockReqText();
+    }
+    updateUnlockReqText() {
+        const req = document.getElementById('unlockReqText');
+        if (this._unlockMode === 'mandelbrick') {
+            const m = this.getItemCount('Mandelbrick');
+            const q = this.getItemCount('Quantum Key');
+            req.textContent = `Needs: Mandelbrick ×${m}, Quantum Key ×${q}`;
+        } else {
+            const t = this.getItemCount('Turbrick');
+            req.textContent = `Needs: Turbrick ×${t}`;
+        }
+    }
+    async handleUnlockRoll(count) {
+        // validate inventory
+        if (this._unlockMode === 'mandelbrick') {
+            if (this.getItemCount('Mandelbrick') < count || this.getItemCount('Quantum Key') < count) {
+                alert('Missing required items: Mandelbrick and/or Quantum Key.');
+                return;
+            }
+            this.decItem('Mandelbrick', count);
+            this.decItem('Quantum Key', count);
+        } else {
+            if (this.getItemCount('Turbrick') < count) {
+                alert('Missing required item: Turbrick.');
+                return;
+            }
+            this.decItem('Turbrick', count);
+        }
+        this.updateUnlockReqText();
+        // play scan animation then produce results
+        await this.playUnlockScan();
+        const results = [];
+        for (let i=0;i<count;i++){
+            const pool = (this._unlockMode === 'mandelbrick') ? gameData.characters.red : gameData.characters.gold;
+            results.push(this.getRandomItem(pool));
+        }
+        // add to inventory and show
+        results.forEach(name => this.characterInventory.push(name));
+        if (document.getElementById('inventoryModal').style.display === 'flex') this.showInventory('characters');
+        const box = document.getElementById('unlockResults');
+        const title = (this._unlockMode === 'mandelbrick') ? 'Red Tier Character' : 'Gold Tier Character';
+        box.innerHTML = results.map(n => `<div style="margin-top:.35rem;"><strong>${title}:</strong> ${this.translateName(n)}</div>`).join('');
+        // toast
+        this.showSaveToast(`Unlocked ${results.length}× ${title}`, 900);
+    }
+    playUnlockScan() {
+        return new Promise(res => {
+            const line = document.getElementById('goldScanLine');
+            line.style.transition = 'none';
+            line.style.top = '-100%';
+            // force reflow
+            void line.offsetHeight;
+            line.style.transition = 'top 0.8s cubic-bezier(.2,.8,.2,1)';
+            line.style.top = '100%';
+            setTimeout(()=> { line.style.transition='none'; line.style.top='-100%'; res(); }, 850);
+        });
     }
 }
 
