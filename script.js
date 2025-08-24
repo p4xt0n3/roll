@@ -2676,4 +2676,5 @@ document.head.appendChild(style);
 document.addEventListener('DOMContentLoaded', () => {
     const gacha = new GachaSystem();
     gacha.updateStellarCoinDisplay();
+    window.gacha = gacha; // expose for shop.js
 });
